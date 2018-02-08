@@ -1,5 +1,8 @@
 package Client;
 
+import Client.gui.ClientGUI;
+import javafx.application.Application;
+
 public class ClientMain {
 
     public static void main(String[] args) {
@@ -7,6 +10,6 @@ public class ClientMain {
     }
 
     public void run(){
-
+        Application.launch(ClientGUI.class);
     }
 }
