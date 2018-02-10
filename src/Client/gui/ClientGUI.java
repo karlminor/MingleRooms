@@ -14,6 +14,8 @@ public class ClientGUI extends Application {
     private BorderPane root;
     private FirstView firstView;
 
+    public ClientGUI(){
+    }
     @Override
     public void start(Stage stage) throws Exception {
         root = new BorderPane();

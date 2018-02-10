@@ -1,5 +1,9 @@
 package Server;
 
+import Server.ServerLogic.Server;
+
+import java.io.IOException;
+
 public class ServerMain {
 
     public static void main(String[] args){
@@ -7,6 +11,11 @@ public class ServerMain {
     }
 
     public void run(){
-
+        try {
+            Server server = new Server(30000);
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
