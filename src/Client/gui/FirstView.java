@@ -1,16 +1,28 @@
 package Client.gui;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class FirstView extends VBox{
     private final int INSETS = 10;
     private final int SPACING = 10;
 
-    public FirstView() {
+    private ClientGUI clientGUI;
+
+    private PPTextField inetAddressTF;
+    private PPTextField portTF;
+    private PPTextField nicknameTF;
+
+    public FirstView(ClientGUI clientGUI) {
+        this.clientGUI = clientGUI;
         containerSettings();
         initComponents();
     }
@@ -23,12 +35,42 @@ public class FirstView extends VBox{
 
     private void initComponents() {
         Label title = new Label("Mingle Rooms - Client");
-        PPTextField inetAddressTF = new PPTextField("Internet address");
-        PPTextField portTF = new PPTextField("Port");
-        PPTextField nicknameTF = new PPTextField("Nickname");
+        inetAddressTF = new PPTextField("Internet address");
+        portTF = new PPTextField("Port");
+        nicknameTF = new PPTextField("Nickname");
         Button connectB = new Button("Connect");
+        connectB.setOnAction(new ConnectButtonHandler());
+
+        // TODO temp values
+        inetAddressTF.setText("192.168.0.1");
+        portTF.setText("30000");
+        nicknameTF.setText("SampleNickname");
 
         getChildren().addAll(title, inetAddressTF, portTF, nicknameTF, connectB);
+    }
+
+    private class ConnectButtonHandler implements EventHandler<ActionEvent>{
+        @Override
+        public void handle(ActionEvent event) {
+            try {
+                InetAddress inetAddress = InetAddress.getByName(inetAddressTF.getText());
+                int port = Integer.parseInt(portTF.getText());
+                String nickname = nicknameTF.getText();
+
+                if(inetAddress != null && port > 0 && port <= 65535 && !nickname.isEmpty()) {
+                    // TODO establish connection to server
+
+                    // Change GUI view if success
+                    clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
+                }
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+                // TODO show in gui
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                // TODO show in gui
+            }
+        }
     }
 
 }
