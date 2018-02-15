@@ -10,6 +10,7 @@ public class ClientGUI extends Application {
     private final int WIDTH = 400;
     private final int HEIGHT = 300;
 
+    private Stage stage;
     private BorderPane root;
     private FirstView firstView;
     private ChatRoomView chatRoomView;
@@ -19,6 +20,7 @@ public class ClientGUI extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        this.stage = stage;
         root = new BorderPane();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         scene.getStylesheets().add(getClass().getResource("persistent-prompt.css").toExternalForm()); // Needed for persistent prompt text fields
@@ -39,8 +41,14 @@ public class ClientGUI extends Application {
                 root.setCenter(firstView);
                 break;
             case CHAT_ROOM_VIEW:
+                setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
                 root.setCenter(chatRoomView);
                 break;
         }
+    }
+
+    public void setSize(int width, int height) {
+        stage.setWidth(width);
+        stage.setHeight(height);
     }
 }
