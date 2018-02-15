@@ -33,7 +33,7 @@ public class Server {
 
             //Checks if any of the users in the user list are disconnected and clears them from the user list before
             //creating the user and adding it to the user list
-            u = new User(socket);
+            u = new User(socket, mailbox);
             users.add(u);
             u.start();
         }
