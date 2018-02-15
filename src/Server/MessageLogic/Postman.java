@@ -17,13 +17,39 @@ public class Postman extends Thread{
     }
 
     public void run(){
-        String message;
+        Message message;
+        User sender;
+        String text;
+        int id;
         while(true){
             try {
                 message = mailbox.withdraw();
+                sender = message.sender;
+                text = message.text;
+                id = sender.getUserId();
                 for (User u : users.userList()){
                     if (u.status()) {
-                        u.echo(message);
+                        char identifier = text.charAt(0);
+                        switch (identifier) {
+                            case ('P'):
+                                if (sender.sameRoom(u.getRoom())){
+                                    u.echo(text);
+                                }
+                                break;
+                            case ('R'):
+
+                                break;
+                            case ('M'):
+
+                                break;
+                            case ('Q'):
+                                
+                                break;
+                            default:
+                                break;
+                        }
+
+                        u.echo(message.text);
                     } else {
                         users.remove(u);
                         //Perform a clean up telling all users that the user disconnected etc
