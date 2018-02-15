@@ -3,7 +3,6 @@ package Client.gui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class ClientGUI extends Application {
@@ -13,9 +12,11 @@ public class ClientGUI extends Application {
 
     private BorderPane root;
     private FirstView firstView;
+    private ChatRoomView chatRoomView;
 
-    public ClientGUI(){
-    }
+    public final static int FIRST_VIEW = 0;
+    public final static int CHAT_ROOM_VIEW = 1;
+
     @Override
     public void start(Stage stage) throws Exception {
         root = new BorderPane();
@@ -25,12 +26,21 @@ public class ClientGUI extends Application {
         stage.setTitle(TITLE);
 
         stage.show();
-        firstView = new FirstView();
-        changeView(firstView);
+        firstView = new FirstView(this);
+        changeView(FIRST_VIEW);
+
+        chatRoomView = new ChatRoomView(this);
     }
 
-    private void changeView(Pane newPane) {
+    public void changeView(int chatRoom) {
         root.getChildren().removeAll();
-        root.setCenter(newPane);
+        switch (chatRoom) {
+            case FIRST_VIEW:
+                root.setCenter(firstView);
+                break;
+            case CHAT_ROOM_VIEW:
+                root.setCenter(chatRoomView);
+                break;
+        }
     }
 }
