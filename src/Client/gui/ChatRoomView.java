@@ -1,9 +1,9 @@
 package Client.gui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -34,16 +34,24 @@ public class ChatRoomView extends HBox {
         BorderPane leftSidePanel = new BorderPane();
         leftSidePanel.setMinHeight(200);
         Label friendsLB = new Label("Friends");
-        Button disconnectB = new Button("Disconnect");
-        disconnectB.setAlignment(Pos.BOTTOM_CENTER);
 
-        //leftSidePanel.top
+        ObservableList<String> friendsOnlineList = FXCollections.observableArrayList(
+                "Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
+        ListView<String> friendsOnlineLV = new ListView<>(friendsOnlineList);
+
+        Button disconnectB = new Button("Disconnect");
+
+        leftSidePanel.setTop(friendsLB);
+        leftSidePanel.setCenter(friendsOnlineLV);
+        leftSidePanel.setBottom(disconnectB);
         return leftSidePanel;
     }
 
     private VBox initMainPanel() {
         VBox mainPanel = new VBox();
         Label chatRoomLB = new Label("You are in chat room: ...");
+
+        HBox innerTopPanel = new HBox();
 
         GridPane board = new GridPane();
         board.setMaxSize(300, 300);
@@ -55,7 +63,33 @@ public class ChatRoomView extends HBox {
             }
         }
 
-        mainPanel.getChildren().addAll(chatRoomLB, board);
+        VBox innerSidePanel = new VBox();
+        innerSidePanel.setAlignment(Pos.BOTTOM_CENTER);
+
+        Button p2pChat = new Button("Start P2P chat");
+        Button enterChatRoom = new Button("Enter chat room: x");
+
+        innerSidePanel.getChildren().addAll(p2pChat, enterChatRoom);
+
+        innerTopPanel.getChildren().addAll(board, innerSidePanel);
+
+
+
+        ScrollPane chatScroll = new ScrollPane();
+        chatScroll.setFitToWidth(true);
+        TextArea chat = new TextArea("Chat messages...");
+        chat.setEditable(false);
+        chatScroll.setContent(chat);
+
+        HBox innerBottomPanel = new HBox();
+
+        TextArea message = new TextArea("New message");
+
+        Button send = new Button("Send");
+
+        innerBottomPanel.getChildren().addAll(message, send);
+
+        mainPanel.getChildren().addAll(chatRoomLB, innerTopPanel, chatScroll, innerBottomPanel);
 
         return mainPanel;
     }

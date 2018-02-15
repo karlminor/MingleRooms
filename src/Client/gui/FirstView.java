@@ -58,10 +58,15 @@ public class FirstView extends VBox{
                 String nickname = nicknameTF.getText();
 
                 if(inetAddress != null && port > 0 && port <= 65535 && !nickname.isEmpty()) {
-                    // TODO establish connection to server
+                    if(!nickname.contains("¤")) {
+                        // TODO establish connection to server
 
-                    // Change GUI view if success
-                    clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
+                        // Change GUI view if success
+                        clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
+                    } else {
+                        // TODO error message
+
+                    }
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
