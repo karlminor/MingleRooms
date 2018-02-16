@@ -24,6 +24,7 @@ public class ClientGUI extends Application {
         root = new BorderPane();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         scene.getStylesheets().add(getClass().getResource("persistent-prompt.css").toExternalForm()); // Needed for persistent prompt text fields
+        scene.getStylesheets().add(getClass().getResource("boardTiles.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle(TITLE);
 

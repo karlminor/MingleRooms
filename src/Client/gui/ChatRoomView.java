@@ -8,6 +8,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 
 public class ChatRoomView extends HBox {
@@ -20,6 +22,10 @@ public class ChatRoomView extends HBox {
 
     private ClientGUI clientGUI;
 
+    private GridPane board;
+    private final int BOARD_X_TILES = 5;
+    private final int BOARD_Y_TILES = 5;
+
     public ChatRoomView(ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
         containerSettings();
@@ -30,6 +36,7 @@ public class ChatRoomView extends HBox {
         setAlignment(Pos.CENTER);
         setPadding(new Insets(INSETS, INSETS, INSETS, INSETS));
         setSpacing(SPACING);
+        setOnKeyPressed(new KeyboardHandler());
     }
 
     private void initComponents() {
@@ -48,6 +55,7 @@ public class ChatRoomView extends HBox {
         ObservableList<String> friendsOnlineList = FXCollections.observableArrayList(
                 "Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
         ListView<String> friendsOnlineLV = new ListView<>(friendsOnlineList);
+        friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
 
         Button disconnectB = new Button("Disconnect");
         disconnectB.setOnAction(new DisconnectButtonHandler());
@@ -78,25 +86,22 @@ public class ChatRoomView extends HBox {
 
         // Board
         BorderPane innerCenterPanel = new BorderPane();
-        //innerCenterPanel.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-        GridPane board = new GridPane();
-        //board.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+        board = new GridPane();
         board.setMaxWidth(HEIGHT * 0.55);
         board.setMaxHeight(HEIGHT * 0.55);
-        for(int y = 0; y < 5; y++) {
-            for(int x = 0; x < 5; x++) {
-                TextArea temp = new TextArea(Integer.toString(x + y * 5 + 1));
+        for(int y = 0; y < BOARD_Y_TILES; y++) {
+            for(int x = 0; x < BOARD_X_TILES; x++) {
+                TextArea temp = new TextArea(Integer.toString(x + y * BOARD_X_TILES + 1));
                 temp.setEditable(false);
-                //temp.setBackground(Background.EMPTY);
-                //temp.setBackground(new Background(new BackgroundImage(new Image("test.jpg"), null, null, null, null)));
-                //temp.set
+                temp.setId("boardTile");
+                temp.setMouseTransparent(true);
+                temp.setFocusTraversable(false);
                 board.add(temp, x, y);
             }
         }
 
         // P2P and enter chat room buttons
         VBox innerSidePanel = new VBox();
-        //innerSidePanel.setBackground(new Background(new BackgroundFill(Color.YELLOW, null, null)));
         innerSidePanel.setSpacing(SPACING);
         innerSidePanel.setAlignment(Pos.BOTTOM_RIGHT);
         Button p2pChat = new Button("Start P2P chat");
@@ -117,8 +122,10 @@ public class ChatRoomView extends HBox {
 
         // Chat messages
         ScrollPane chatScroll = new ScrollPane();
+        chatScroll.setOnKeyPressed(new KeyboardHandler());
         chatScroll.setFitToWidth(true);
         TextArea chat = new TextArea();
+        chat.setOnKeyPressed(new KeyboardHandler());
         chat.setWrapText(true);
         chat.setPromptText("No chat messages received");
         chat.setPrefHeight(HEIGHT * 0.2);
@@ -146,7 +153,32 @@ public class ChatRoomView extends HBox {
     }
 
     private void drawIconInBoard(int x, int y) {
+        if(x > 0 && x <= BOARD_X_TILES && y > 0 && y <= BOARD_Y_TILES) {
+            TextArea currentTile = (TextArea) board.getChildren().get(x - 1 + (y - 1) * (BOARD_X_TILES));
+            currentTile.setBackground(new Background(new BackgroundImage(new Image("test.jpg"), null, null, null, null)));
+        }
+    }
 
+    private class KeyboardHandler implements EventHandler<KeyEvent> {
+
+        @Override
+        public void handle(KeyEvent event) {
+            switch (event.getCode()) {
+                case UP:
+                    System.out.println("UP");
+                    break;
+                case DOWN:
+                    System.out.println("DOWN");
+                    break;
+                case LEFT:
+                    System.out.println("LEFT");
+                    break;
+                case RIGHT:
+                    System.out.println("RIGHT");
+                    break;
+            }
+            event.consume();
+        }
     }
 
     private class DisconnectButtonHandler implements EventHandler<ActionEvent> {
@@ -164,6 +196,7 @@ public class ChatRoomView extends HBox {
         @Override
         public void handle(ActionEvent event) {
             // TODO
+
         }
     }
 

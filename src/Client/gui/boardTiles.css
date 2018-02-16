@@ -1,0 +1,16 @@
+#boardTile .scroll-pane {
+    -fx-background-color: rgba(255,255,255,0.1);;
+}
+
+#boardTile .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+#boardTile .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
+#boardTile *.text {
+    -fx-text-alignment: center;
+}
