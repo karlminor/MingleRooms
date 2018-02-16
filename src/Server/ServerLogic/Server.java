@@ -16,12 +16,14 @@ public class Server {
     private Users users;
     private Mailbox mailbox;
     private Postman postman;
+    private int count;
 
     public Server(int port) throws IOException {
         ss = new ServerSocket(port);
         users = new Users();
         mailbox = new Mailbox();
         postman = new Postman(users, mailbox);
+        count = 0;
     }
 
     public void start() throws IOException {
@@ -29,10 +31,12 @@ public class Server {
         while(true){
             socket = ss.accept();
 
-
-            u = new User(socket, mailbox);
-            users.add(u);
+            u = new User(socket, mailbox, count);
             u.start();
+            users.add(u);
+            count++;
+
+
         }
     }
 }
