@@ -12,6 +12,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class FirstView extends VBox{
+    // Size for this view only
+    public static final int WIDTH = 400;
+    public static final int HEIGHT = 300;
+
     private final int INSETS = 10;
     private final int SPACING = 10;
 

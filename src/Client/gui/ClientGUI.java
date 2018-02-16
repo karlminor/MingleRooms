@@ -38,11 +38,12 @@ public class ClientGUI extends Application {
         root.getChildren().removeAll();
         switch (chatRoom) {
             case FIRST_VIEW:
+                setSize(FirstView.WIDTH, FirstView.HEIGHT);
                 root.setCenter(firstView);
                 break;
             case CHAT_ROOM_VIEW:
-                setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
                 root.setCenter(chatRoomView);
+                setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
                 break;
         }
     }
@@ -50,5 +51,6 @@ public class ClientGUI extends Application {
     public void setSize(int width, int height) {
         stage.setWidth(width);
         stage.setHeight(height);
+        stage.centerOnScreen();
     }
 }
