@@ -2,7 +2,6 @@ package Client;
 
 import Client.gui.ChatRoomView;
 import Client.gui.ClientGUI;
-import Client.gui.ClientNetworkThread;
 import javafx.application.Application;
 
 public class ClientMain {

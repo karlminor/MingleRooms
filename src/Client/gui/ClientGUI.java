@@ -1,6 +1,7 @@
 package Client.gui;
 
-import Client.ClientCommunication;
+import Client.CommunicationCallsFromGUI;
+import Client.CommunicationCallsFromGUIImpl;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -17,7 +18,7 @@ public class ClientGUI extends Application {
     private BorderPane root;
     private FirstView firstView;
     private ChatRoomView chatRoomView;
-    private ClientCommunication clientCommunication;
+    private CommunicationCallsFromGUI communicationCallsFromGUI;
 
     public final static int FIRST_VIEW = 0;
     public final static int CHAT_ROOM_VIEW = 1;
@@ -64,10 +65,10 @@ public class ClientGUI extends Application {
         stage.centerOnScreen();
     }
 
-    public ClientCommunication getClientCommunication() {
-        if(clientCommunication == null) {
-            clientCommunication = new ClientCommunicationImpl(chatRoomView);
+    public CommunicationCallsFromGUI getCommunicationCallsFromGUI() {
+        if(communicationCallsFromGUI == null) {
+            communicationCallsFromGUI = new CommunicationCallsFromGUIImpl(chatRoomView);
         }
-        return clientCommunication;
+        return communicationCallsFromGUI;
     }
 }

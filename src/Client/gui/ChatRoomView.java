@@ -1,6 +1,6 @@
 package Client.gui;
 
-import Client.ClientCommunication;
+import Client.CommunicationCallsFromGUI;
 import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ public class ChatRoomView extends HBox {
     private ClientGUI clientGUI;
 
     private GridPane board;
+    private ArrayList<TextArea> boardTextAreas;
     private TextArea chat;
     private TextArea message;
     private ObservableList<String> friendsOnlineList;
@@ -93,8 +95,12 @@ public class ChatRoomView extends HBox {
         // Board
         BorderPane innerCenterPanel = new BorderPane();
         board = new GridPane();
+        board.setPadding(new Insets(INSETS, INSETS, INSETS, INSETS));
+        board.setGridLinesVisible(true);
+        board.setBackground(new Background(new BackgroundFill(Color.rgb(255,255,255, 1), null, null)));
         board.setMaxWidth(HEIGHT * 0.55);
         board.setMaxHeight(HEIGHT * 0.55);
+        boardTextAreas = new ArrayList<>();
         for(int y = 0; y < BOARD_Y_TILES; y++) {
             for(int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea temp = new TextArea(Integer.toString(x + y * BOARD_X_TILES + 1));
@@ -103,6 +109,7 @@ public class ChatRoomView extends HBox {
                 temp.setMouseTransparent(true);
                 temp.setFocusTraversable(false);
                 board.add(temp, x, y);
+                boardTextAreas.add(temp);
             }
         }
 
@@ -155,24 +162,23 @@ public class ChatRoomView extends HBox {
     }
 
     private void clearBoard() {
-        for(int y = 0; y < BOARD_Y_TILES; y++) {
-            for(int x = 0; x < BOARD_X_TILES; x++) {
-                TextArea currentTile = (TextArea) board.getChildren().get(x + y * BOARD_X_TILES);
-                currentTile.setBackground(Background.EMPTY);
-                // TODO This also clears the base color...
-                currentTile.getStyleClass().clear();
-                currentTile.getStyleClass().addAll("text-input", "text-area");
+        for (int y = 0; y < BOARD_Y_TILES; y++) {
+            for (int x = 0; x < BOARD_X_TILES; x++) {
+                TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
+                currentTile.setBackground(new Background(currentTile.getBackground().getFills(), null));
             }
         }
     }
 
     private void drawIconInBoard(int x, int y, Image avatar) {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
-            TextArea currentTile = (TextArea) board.getChildren().get(x + y * BOARD_X_TILES);
+            TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
             if(avatar != null) {
                 // TODO Image is not scaled correctly
                 BackgroundImage backgroundImage = new BackgroundImage(avatar, null, null, null, null);
-                currentTile.setBackground(new Background(backgroundImage));
+                ArrayList<BackgroundImage> backgroundImages = new ArrayList<>();
+                backgroundImages.add(backgroundImage);
+                currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
             }
             // TODO show player name also
         }
@@ -210,19 +216,19 @@ public class ChatRoomView extends HBox {
             switch (event.getCode()) {
                 case UP:
                     System.out.println("UP");
-                    clientGUI.getClientCommunication().move(ClientCommunication.UP);
+                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.UP);
                     break;
                 case DOWN:
                     System.out.println("DOWN");
-                    clientGUI.getClientCommunication().move(ClientCommunication.DOWN);
+                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.DOWN);
                     break;
                 case LEFT:
                     System.out.println("LEFT");
-                    clientGUI.getClientCommunication().move(ClientCommunication.LEFT);
+                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.LEFT);
                     break;
                 case RIGHT:
                     System.out.println("RIGHT");
-                    clientGUI.getClientCommunication().move(ClientCommunication.RIGHT);
+                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.RIGHT);
                     break;
             }
             event.consume();
@@ -234,7 +240,7 @@ public class ChatRoomView extends HBox {
         @Override
         public void handle(ActionEvent event) {
             // TODO
-            if(clientGUI.getClientCommunication().disconnectFromServer()) {
+            if(clientGUI.getCommunicationCallsFromGUI().disconnectFromServer()) {
                 clientGUI.changeView(ClientGUI.FIRST_VIEW);
             } else {
                 // TODO display error message in GUI
@@ -249,7 +255,7 @@ public class ChatRoomView extends HBox {
         public void handle(ActionEvent event) {
             String text = message.getText();
             if(text != null && !text.isEmpty()) {
-                if(clientGUI.getClientCommunication().sendMessage(text)) {
+                if(clientGUI.getCommunicationCallsFromGUI().sendMessage(text)) {
                     message.setText("");
                 } else {
                     // TODO display error message in GUI

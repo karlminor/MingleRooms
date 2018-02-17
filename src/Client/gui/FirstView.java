@@ -1,6 +1,5 @@
 package Client.gui;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -64,7 +63,7 @@ public class FirstView extends VBox{
 
                 if(inetAddress != null && port > 0 && port <= 65535 && !nickname.isEmpty()) {
                     if(!nickname.contains("¤")) {
-                        boolean success = clientGUI.getClientCommunication().connectToServer(inetAddress, port, nickname);
+                        boolean success = clientGUI.getCommunicationCallsFromGUI().connectToServer(inetAddress, port, nickname);
                         if(success) {
                             clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
                         } else {
