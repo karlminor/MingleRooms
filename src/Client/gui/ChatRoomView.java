@@ -1,5 +1,6 @@
 package Client.gui;
 
+import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,9 +9,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+
+import java.util.ArrayList;
 
 public class ChatRoomView extends HBox {
     // Size for this view only
@@ -23,6 +25,8 @@ public class ChatRoomView extends HBox {
     private ClientGUI clientGUI;
 
     private GridPane board;
+    private TextArea chat;
+    private TextArea message;
     private final int BOARD_X_TILES = 5;
     private final int BOARD_Y_TILES = 5;
 
@@ -124,7 +128,7 @@ public class ChatRoomView extends HBox {
         ScrollPane chatScroll = new ScrollPane();
         chatScroll.setOnKeyPressed(new KeyboardHandler());
         chatScroll.setFitToWidth(true);
-        TextArea chat = new TextArea();
+        chat = new TextArea();
         chat.setOnKeyPressed(new KeyboardHandler());
         chat.setWrapText(true);
         chat.setPromptText("No chat messages received");
@@ -135,7 +139,7 @@ public class ChatRoomView extends HBox {
         // New message and send button
         HBox innerBottomPanel = new HBox();
         innerBottomPanel.setSpacing(SPACING);
-        TextArea message = new TextArea();
+        message = new TextArea();
         message.setWrapText(true);
         message.setPromptText("Enter a chat message");
         message.setPrefHeight(HEIGHT * 0.15);
@@ -152,10 +156,34 @@ public class ChatRoomView extends HBox {
         return mainPanel;
     }
 
-    private void drawIconInBoard(int x, int y) {
-        if(x > 0 && x <= BOARD_X_TILES && y > 0 && y <= BOARD_Y_TILES) {
-            TextArea currentTile = (TextArea) board.getChildren().get(x - 1 + (y - 1) * (BOARD_X_TILES));
-            currentTile.setBackground(new Background(new BackgroundImage(new Image("test.jpg"), null, null, null, null)));
+    private void clearBoard() {
+        for(int y = 0; y < BOARD_Y_TILES; y++) {
+            for(int x = 0; x < BOARD_X_TILES; x++) {
+                TextArea currentTile = (TextArea) board.getChildren().get(x + y * BOARD_X_TILES);
+                currentTile.setBackground(Background.EMPTY);
+                // TODO This also clears the base color...
+                currentTile.getStyleClass().clear();
+                currentTile.getStyleClass().addAll("text-input", "text-area");
+            }
+        }
+    }
+
+    private void drawIconInBoard(int x, int y, Image avatar) {
+        if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
+            TextArea currentTile = (TextArea) board.getChildren().get(x + y * BOARD_X_TILES);
+            if(avatar != null) {
+                // TODO Image is not scaled correctly
+                BackgroundImage backgroundImage = new BackgroundImage(avatar, null, null, null, null);
+                currentTile.setBackground(new Background(backgroundImage));
+            }
+            // TODO show player name also
+        }
+    }
+
+    public void displayCharactersInGUI(ArrayList<User> users) {
+        clearBoard();
+        for(User u : users) {
+            drawIconInBoard(u.getX(), u.getY(), u.getAvatar());
         }
     }
 
@@ -186,8 +214,12 @@ public class ChatRoomView extends HBox {
         @Override
         public void handle(ActionEvent event) {
             // TODO
-
-            clientGUI.changeView(ClientGUI.FIRST_VIEW);
+            if(clientGUI.getClientCommunication().disconnectFromServer()) {
+                clientGUI.changeView(ClientGUI.FIRST_VIEW);
+            } else {
+                // TODO display error message in GUI
+                System.out.println("Error disconnecting from server");
+            }
         }
     }
 
@@ -195,8 +227,15 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(ActionEvent event) {
-            // TODO
-
+            String text = message.getText();
+            if(text != null && !text.isEmpty()) {
+                if(clientGUI.getClientCommunication().sendMessage(text)) {
+                    message.setText("");
+                } else {
+                    // TODO display error message in GUI
+                    System.out.println("Error sending message to server");
+                }
+            }
         }
     }
 

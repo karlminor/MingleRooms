@@ -1,9 +1,13 @@
 package Client.gui;
 
+import Client.ClientCommunication;
+import Client.ClientMain;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class ClientGUI extends Application {
     private final String TITLE = "Mingle Rooms - Client";
@@ -14,6 +18,7 @@ public class ClientGUI extends Application {
     private BorderPane root;
     private FirstView firstView;
     private ChatRoomView chatRoomView;
+    private ClientCommunication clientCommunication;
 
     public final static int FIRST_VIEW = 0;
     public final static int CHAT_ROOM_VIEW = 1;
@@ -27,11 +32,16 @@ public class ClientGUI extends Application {
         scene.getStylesheets().add(getClass().getResource("boardTiles.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle(TITLE);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                System.exit(0);
+            }
+        });
 
         stage.show();
         firstView = new FirstView(this);
         changeView(FIRST_VIEW);
-
         chatRoomView = new ChatRoomView(this);
     }
 
@@ -53,5 +63,12 @@ public class ClientGUI extends Application {
         stage.setWidth(width);
         stage.setHeight(height);
         stage.centerOnScreen();
+    }
+
+    public ClientCommunication getClientCommunication() {
+        if(clientCommunication == null) {
+            clientCommunication = new ClientCommunicationImpl(chatRoomView);
+        }
+        return clientCommunication;
     }
 }
