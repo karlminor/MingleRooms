@@ -29,6 +29,16 @@ public class Postman extends Thread{
                 id = sender.getUserId();
                 for (User u : users.userList()){
                     if (u.status()) {
+
+                         /* Finds the identifier of the message and takes different actions depending on this
+                            N = new user connected, format is name
+                            A = avatar information, format is avatar identifier
+                            P = position update, the string received will be format xxxx¤yyyy should dx dy
+                            R = room update, the string received will be formatted as just the number for the room and the position split with : i.e. nn¤xx.xx¤yy.yy
+                            M = message, the string received will be the string message
+                            Q = quit
+                        */
+
                         char identifier = text.charAt(0);
                         switch (identifier) {
                             case ('P'):
@@ -43,7 +53,7 @@ public class Postman extends Thread{
 
                                 break;
                             case ('Q'):
-                                
+
                                 break;
                             default:
                                 break;

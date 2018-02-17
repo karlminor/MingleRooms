@@ -22,6 +22,8 @@ public class User extends Thread {
 
     private int currentRoom;
 
+    private boolean settingUp;
+
     public User(Socket socket, Mailbox mailbox, int id){
         status = true;
         this.socket = socket;
@@ -29,11 +31,17 @@ public class User extends Thread {
         this.id = id;
         name = "User";
         currentRoom = 0;
-
+        x = 0;
+        y = 0;
+        settingUp = false;
     }
 
     public boolean status(){
         return status;
+    }
+
+    public void setupComplete(){
+        settingUp = true;
     }
 
     public void run(){
@@ -42,6 +50,9 @@ public class User extends Thread {
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            //settingUp is set to true by Users when the connection is established and all information needed has been shared
+            while(!settingUp){
+            }
             while(socket.isConnected()){
                 handleConnection();
             }
@@ -52,6 +63,18 @@ public class User extends Thread {
         }
     }
 
+    //The first message from client must be format "name¤avatar" to set this up for the server. The server replies with the user's id as id
+    public boolean setupConnection() throws IOException {
+        String message = input.readLine();
+        if(message.matches(".*¤.*")){
+            String msg[] = message.split("¤");
+            name = msg[0];
+            avatar = msg[1];
+            echo(Integer.toString(id));
+            return true;
+        }
+        return false;
+    }
 
     private void handleConnection() throws InterruptedException, IOException {
         String message = input.readLine();
