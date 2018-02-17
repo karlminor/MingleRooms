@@ -1,7 +1,6 @@
 package Client.gui;
 
 import Client.ClientCommunication;
-import Client.ClientMain;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;

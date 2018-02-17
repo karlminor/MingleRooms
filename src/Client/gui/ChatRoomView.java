@@ -1,5 +1,6 @@
 package Client.gui;
 
+import Client.ClientCommunication;
 import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +28,8 @@ public class ChatRoomView extends HBox {
     private GridPane board;
     private TextArea chat;
     private TextArea message;
+    private ObservableList<String> friendsOnlineList;
+
     private final int BOARD_X_TILES = 5;
     private final int BOARD_Y_TILES = 5;
 
@@ -56,8 +59,7 @@ public class ChatRoomView extends HBox {
         Label friendsLB = new Label("Friends");
         innerTopPanel.getChildren().add(friendsLB);
 
-        ObservableList<String> friendsOnlineList = FXCollections.observableArrayList(
-                "Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
+        friendsOnlineList = FXCollections.observableArrayList();
         ListView<String> friendsOnlineLV = new ListView<>(friendsOnlineList);
         friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
 
@@ -125,16 +127,12 @@ public class ChatRoomView extends HBox {
 
 
         // Chat messages
-        ScrollPane chatScroll = new ScrollPane();
-        chatScroll.setOnKeyPressed(new KeyboardHandler());
-        chatScroll.setFitToWidth(true);
         chat = new TextArea();
         chat.setOnKeyPressed(new KeyboardHandler());
         chat.setWrapText(true);
         chat.setPromptText("No chat messages received");
         chat.setPrefHeight(HEIGHT * 0.2);
         chat.setEditable(false);
-        chatScroll.setContent(chat);
 
         // New message and send button
         HBox innerBottomPanel = new HBox();
@@ -151,7 +149,7 @@ public class ChatRoomView extends HBox {
         innerBottomPanel.getChildren().addAll(message, send);
 
 
-        mainPanel.getChildren().addAll(innerTopPanel, innerCenterPanel, chatScroll, innerBottomPanel);
+        mainPanel.getChildren().addAll(innerTopPanel, innerCenterPanel, chat, innerBottomPanel);
 
         return mainPanel;
     }
@@ -182,31 +180,49 @@ public class ChatRoomView extends HBox {
 
     public void displayCharactersInGUI(ArrayList<User> users) {
         clearBoard();
+        // TODO check if users are in this chat room
         for(User u : users) {
             drawIconInBoard(u.getX(), u.getY(), u.getAvatar());
         }
     }
 
+    public void updateFriendsOnline(ArrayList<User> users) {
+        // TODO check if users are in this chat room
+        friendsOnlineList.clear();
+        for(User u : users) {
+            friendsOnlineList.add(u.getNickname());
+        }
+    }
+
     public void updateChat(ArrayList<String> messages) {
-        // TODO
+        chat.clear();
+        for(String s : messages) {
+            chat.setText(chat.getText() + s + "\n");
+        }
+        chat.setScrollTop(Double.MAX_VALUE);
     }
 
     private class KeyboardHandler implements EventHandler<KeyEvent> {
 
         @Override
         public void handle(KeyEvent event) {
+            // TODO Maybe add some delay so that user can not walk too fast?
             switch (event.getCode()) {
                 case UP:
                     System.out.println("UP");
+                    clientGUI.getClientCommunication().move(ClientCommunication.UP);
                     break;
                 case DOWN:
                     System.out.println("DOWN");
+                    clientGUI.getClientCommunication().move(ClientCommunication.DOWN);
                     break;
                 case LEFT:
                     System.out.println("LEFT");
+                    clientGUI.getClientCommunication().move(ClientCommunication.LEFT);
                     break;
                 case RIGHT:
                     System.out.println("RIGHT");
+                    clientGUI.getClientCommunication().move(ClientCommunication.RIGHT);
                     break;
             }
             event.consume();

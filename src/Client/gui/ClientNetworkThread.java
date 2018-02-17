@@ -16,10 +16,20 @@ public class ClientNetworkThread extends Thread {
         users = new ArrayList<>();
 
         // TODO temporary code for testing
-        users.add(new User(1, "User 1", "test.jpg", 3, 4));
+        users.add(new User(1, "Pelle", "test.jpg", 1, 3, 4));
+        users.add(new User(1, "Nisse", "test.jpg", 1, 0, 0));
+        chatMessages.add("18:32:15 Pelle: Hejsan!");
+        chatMessages.add("18:32:28 Nisse: Tjena Pelle!");
+        chatMessages.add("18:32:42 Pelle: Hur är läget?");
+        chatMessages.add("18:32:50 Nisse: Det är bra!");
     }
 
     public void run() {
+        // TODO temporary code for testing
+        updateGUIChat(chatMessages);
+        updateFriendsOnline(users);
+
+        int i = 0;
         while(true) {
             String message = read();
             decodeMessage(message);
@@ -28,6 +38,9 @@ public class ClientNetworkThread extends Thread {
             users.get(0).setX((int) (Math.random() * 5));
             users.get(0).setY((int) (Math.random() * 5));
             updateGUICharacters(users);
+            i++;
+            chatMessages.add("18:32:50 ----: Scroll test" + i);
+            updateGUIChat(chatMessages);
             try {
                 Thread.sleep(700);
             } catch (Exception e) {
@@ -59,8 +72,21 @@ public class ClientNetworkThread extends Thread {
         });
     }
 
+    public void updateFriendsOnline(ArrayList<User> users) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                chatRoomView.updateFriendsOnline(users);
+            }
+        });
+    }
+
     public void updateGUIChat(ArrayList<String> chatMessages) {
-        // TODO ---------Method in chatRoomView not yet implemented----------
-        chatRoomView.updateChat(chatMessages);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                chatRoomView.updateChat(chatMessages);
+            }
+        });
     }
 }
