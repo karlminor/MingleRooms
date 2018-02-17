@@ -187,6 +187,10 @@ public class ChatRoomView extends HBox {
         }
     }
 
+    public void updateChat(ArrayList<String> messages) {
+        // TODO
+    }
+
     private class KeyboardHandler implements EventHandler<KeyEvent> {
 
         @Override
