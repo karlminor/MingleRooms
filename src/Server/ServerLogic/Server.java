@@ -35,8 +35,6 @@ public class Server {
             u.start();
             users.add(u);
             count++;
-
-
         }
     }
 }

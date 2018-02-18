@@ -28,6 +28,8 @@ tasks.xml
 # Hidden folders
 .*
 
+out/
+
 # Exclude gitignore file
 !/.gitignore
 
