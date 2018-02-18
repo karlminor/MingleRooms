@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -187,7 +188,7 @@ public class FirstView extends VBox{
                 String nickname = nicknameTF.getText();
                 String avatar = availableAvatars.get(avatarSelection.getSelectionModel().getSelectedIndex());
                 if(inetAddress != null) {
-                    if(port > 0 && port <= 65535) {
+                    if(port >= 0 && port <= 65535) {
                         if(!nickname.isEmpty()) {
                             if(!nickname.contains("¤")) {
                                 if(avatar != null && !avatar.isEmpty()) {
@@ -195,34 +196,29 @@ public class FirstView extends VBox{
                                     if(success) {
                                         clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
                                     } else {
-                                        // TODO show in gui
-                                        System.out.println("Failed to connect to server");
+                                        clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to connect to server", "...");
                                     }
                                 } else {
-                                    // TODO show message in GUI
+                                    clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Invalid or no avatar selected", "Please select a valid avatar.");
                                 }
                             } else {
-                                // TODO show message in GUI
-                                System.out.println("Nickname contains unallowed character ¤");
+                                clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Nickname field contains illegal characters", "Please remove '¤' from the nickname.");
                             }
                         } else {
-                            // TODO show message in GUI
-                            System.out.println("Nickname is empty");
+                            clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Nickname field is empty", "Please enter a nickname to continue.");
                         }
                     } else {
-                        // TODO show message in GUI
-                        System.out.println("Illegal port");
+                        clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Entered port is out of range", "Please enter a within the interval 0-65535.");
                     }
                 } else {
-                    // TODO show message in GUI
-                    System.out.println("Problem with inet address");
+                    clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Problem with internet address", "...");
                 }
             } catch (UnknownHostException e) {
+                clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Problem with internet address", "Entered host is unknown.");
                 e.printStackTrace();
-                // TODO show in gui
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                // TODO show in gui
+                clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with input parameters", "Illegal port format", "Please make sure that the port does not contain alphabetic characters.");
             }
         }
     }

@@ -5,6 +5,7 @@ import Client.CommunicationCallsFromGUIImpl;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -70,5 +71,14 @@ public class ClientGUI extends Application {
             communicationCallsFromGUI = new CommunicationCallsFromGUIImpl(chatRoomView);
         }
         return communicationCallsFromGUI;
+    }
+
+    public void showPopup(Alert.AlertType alertType, String title, String headerText, String contentText) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+
+        alert.showAndWait();
     }
 }

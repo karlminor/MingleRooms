@@ -118,9 +118,11 @@ public class ChatRoomView extends HBox {
         innerSidePanel.setSpacing(SPACING);
         innerSidePanel.setAlignment(Pos.BOTTOM_RIGHT);
         Button p2pChat = new Button("Start P2P chat");
+        p2pChat.setOnAction(new P2PButtonHandler());
         p2pChat.setPrefWidth(WIDTH * 0.15);
         p2pChat.setPrefHeight(HEIGHT * 0.06);
         Button enterChatRoom = new Button("Enter chat room: x");
+        enterChatRoom.setOnAction(new EnterChatRoomHandler());
         enterChatRoom.setPrefHeight(p2pChat.getPrefHeight());
         enterChatRoom.setPrefWidth(p2pChat.getPrefWidth());
         innerSidePanel.getChildren().addAll(p2pChat, enterChatRoom);
@@ -166,11 +168,12 @@ public class ChatRoomView extends HBox {
             for (int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
                 currentTile.setBackground(new Background(currentTile.getBackground().getFills(), null));
+                currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
             }
         }
     }
 
-    private void drawIconInBoard(int x, int y, Image avatar) {
+    private void drawIconInBoard(int x, int y, Image avatar, String nickname) {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
             TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
             if(avatar != null) {
@@ -180,7 +183,7 @@ public class ChatRoomView extends HBox {
                 backgroundImages.add(backgroundImage);
                 currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
             }
-            // TODO show player name also
+            currentTile.setText(nickname);
         }
     }
 
@@ -188,7 +191,7 @@ public class ChatRoomView extends HBox {
         clearBoard();
         // TODO check if users are in this chat room
         for(User u : users) {
-            drawIconInBoard(u.getX(), u.getY(), u.getAvatar());
+            drawIconInBoard(u.getX(), u.getY(), u.getAvatar(), u.getNickname());
         }
     }
 
@@ -239,13 +242,10 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(ActionEvent event) {
-            // TODO
-            if(clientGUI.getCommunicationCallsFromGUI().disconnectFromServer()) {
-                clientGUI.changeView(ClientGUI.FIRST_VIEW);
-            } else {
-                // TODO display error message in GUI
-                System.out.println("Error disconnecting from server");
+            if(!clientGUI.getCommunicationCallsFromGUI().disconnectFromServer()) {
+                clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to disconnect from server", "...");
             }
+            clientGUI.changeView(ClientGUI.FIRST_VIEW);
         }
     }
 
@@ -258,10 +258,27 @@ public class ChatRoomView extends HBox {
                 if(clientGUI.getCommunicationCallsFromGUI().sendMessage(text)) {
                     message.setText("");
                 } else {
-                    // TODO display error message in GUI
-                    System.out.println("Error sending message to server");
+                    clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to send message to server", "...");
                 }
             }
+        }
+    }
+
+    private class P2PButtonHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            // TODO
+            clientGUI.showPopup(Alert.AlertType.INFORMATION, "Not yet implemented", "Not yet implemented", "...");
+        }
+    }
+
+    private class EnterChatRoomHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            // TODO
+            clientGUI.showPopup(Alert.AlertType.INFORMATION, "Not yet implemented", "Not yet implemented", "...");
         }
     }
 
