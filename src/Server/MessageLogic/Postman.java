@@ -20,6 +20,7 @@ public class Postman extends Thread{
         Message message;
         User sender;
         String text;
+        String[] info;
         int id;
         while(true){
             try {
@@ -34,23 +35,30 @@ public class Postman extends Thread{
                             N = new user connected, format is name
                             A = avatar information, format is avatar identifier
                             P = position update, the string received will be format xxxx¤yyyy should dx dy
-                            R = room update, the string received will be formatted as just the number for the room and the position split with : i.e. nn¤xx.xx¤yy.yy
-                            M = message, the string received will be the string message
+                            R = room update, the string received will be formatted as just the number for the room and the position i.e. Rid¤nn¤xxxx¤yyyy the user joining the room
+                            will receive information on all users in the room just joined formatted as Rid¤nn¤xxxx¤yyyy
+                            M = message, the string received will be formatted Mid¤text
                             Q = quit
                         */
 
                         char identifier = text.charAt(0);
                         switch (identifier) {
                             case ('P'):
-                                if (sender.sameRoom(u.getRoom())){
+                                if (sender.sameRoom(u)){
                                     u.echo(text);
                                 }
                                 break;
                             case ('R'):
-
+                                if(sender.sameRoom(u)){
+                                    info = u.getInfo();
+                                    sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
+                                }
+                                u.echo(text);
                                 break;
                             case ('M'):
-
+                                if (sender.sameRoom(u)){
+                                    u.echo(text);
+                                }
                                 break;
                             case ('Q'):
 

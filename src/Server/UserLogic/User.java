@@ -81,11 +81,9 @@ public class User extends Thread {
         String msg[];
 
         /* Finds the identifier of the message and takes different actions depending on this
-        N = new user connected, format is name
-        A = avatar information, format is avatar identifier
-        P = position update, the string received will be format xxxx¤yyyy should dx dy
-        R = room update, the string received will be formatted as just the number for the room and the position split with : i.e. nn¤xx.xx¤yy.yy
-        M = message, the string received will be the string message
+        P = position update, the string received will be format Pxxxx¤yyyy should dx dy
+        R = room update, the string received will be formatted as just the number for the room and the position split with : i.e. Rnn¤xxxx¤yyyy
+        M = message, the string received will be the string message, format Mmessage
         Q = quit
         */
 
@@ -93,25 +91,19 @@ public class User extends Thread {
         message = message.substring(1);
         System.out.println(message);
         switch (identifier) {
-            case ('N'):
-                name = message;
-                broadcast("S" + name + " has joined the server");
-                break;
-            case ('A'):
-                avatar = message;
-                break;
             case ('P'):
                 msg = message.split("¤");
                 updatePosition(Double.parseDouble(msg[0]), Double.parseDouble(msg[1]));
+                mailbox.deposit(new Message(this, "P" + id + "¤" + x + "¤" + y));
                 break;
             case ('R'):
                 msg = message.split("¤");
-                broadcast("S" + name + " has left the room");
                 joinRoom(Integer.parseInt(msg[0]));
                 setPosition(Double.parseDouble(msg[1]), Double.parseDouble(msg[2]));
+                mailbox.deposit(new Message(this, "R" + currentRoom + "¤" + x + "¤" + y));
                 break;
             case ('M'):
-                broadcast(message);
+                mailbox.deposit(new Message(this, "M" + id + "¤" + message));
                 break;
             case ('Q'):
                 broadcast("S" + name + " has left the server");
@@ -145,31 +137,25 @@ public class User extends Thread {
         this.y = y;
     }
 
-    public void setAvatar(String avatar){
-        this.avatar = avatar;
-    }
-
     public String[] getInfo(){
         String[] info = {Integer.toString(id), name, avatar, Integer.toString(currentRoom), Double.toString(x), Double.toString(y)};
         return info;
     }
 
-    //Updates the location of the user with format P¤id¤xxxx¤yyyy
+    //Updates the location of the user with format Pid¤xxxx¤yyyy
     public void updatePosition(double dx, double dy) throws InterruptedException {
         x+=dx;
         y+=dy;
-        mailbox.deposit(new Message(this, "P¤" + id + Double.toString(x) + "¤" + Double.toString(y)));
     }
 
-    //This function sets allows us to know which room the user is in
+    //This function sets allows us to know which room the user is in format R¤room¤xxxx¤yyyy
     public void joinRoom(int room) throws InterruptedException {
         currentRoom = room;
-        mailbox.deposit(new Message(this, "R" + room));
     }
 
-    //Return true if the room number sent in is the same as the current room, else false
-    public boolean sameRoom(int room){
-        return currentRoom == room;
+    //Return true if the user sent in is in the same as the current room, else false
+    public boolean sameRoom(User u){
+        return currentRoom == u.getRoom();
     }
 
     public int getRoom(){
