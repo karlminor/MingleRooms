@@ -28,7 +28,7 @@ public class FirstView extends VBox{
     private final int SPACING = 10;
 
     private final String AVATAR_FOLDER_PATH_FOR_FILE = "res/avatars/";
-    private final String AVATAR_FOLDER_PATH_FOR_JAVAFX = "file:res/avatars/";
+    public final static String AVATAR_FOLDER_PATH_FOR_JAVAFX = "file:res/avatars/";
 
     private ArrayList<String> availableAvatars;
     private ArrayList<String> availableAvatarsNoEnding;
