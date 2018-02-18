@@ -9,7 +9,7 @@ public interface CommunicationCallsFromGUI {
     public static final int RIGHT = 3;
 
     // GUI will call this function
-    public boolean connectToServer(InetAddress inetAddress, int port, String nickname);
+    public boolean connectToServer(InetAddress inetAddress, int port, String nickname, String avatar);
 
     // GUI will call this function
     public boolean disconnectFromServer();

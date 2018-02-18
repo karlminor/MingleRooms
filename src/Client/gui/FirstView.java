@@ -9,13 +9,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -38,6 +38,8 @@ public class FirstView extends VBox{
     private PPTextField inetAddressTF;
     private PPTextField portTF;
     private PPTextField nicknameTF;
+    private ChoiceBox<String> avatarSelection;
+    private ImageView avatarIV = null;
 
     public FirstView(ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
@@ -102,10 +104,10 @@ public class FirstView extends VBox{
         avatarCenter.getChildren().add(avatar);
 
         ObservableList<String> avatars = FXCollections.observableArrayList(availableAvatarsNoEnding);
-        ChoiceBox<String> avatarSelection = new ChoiceBox<>(avatars);
+        avatarSelection = new ChoiceBox<>(avatars);
         avatarSelection.getSelectionModel().selectFirst();
+        avatarSelection.setOnAction(new AvatarSelectionHandler());
 
-        ImageView avatarIV = null;
         try {
             String firstImagePath = AVATAR_FOLDER_PATH_FOR_JAVAFX + availableAvatars.get(0);
             avatarIV = new ImageView(firstImagePath);
@@ -158,6 +160,24 @@ public class FirstView extends VBox{
         return fileNames;
     }
 
+    private void changeAvatarImage(int index) {
+        if(index < availableAvatars.size()) {
+            String avatarFileName = availableAvatars.get(index);
+            avatarIV.setImage(new Image(AVATAR_FOLDER_PATH_FOR_JAVAFX + avatarFileName));
+        }
+    }
+
+    private class AvatarSelectionHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            if(event.getSource() instanceof ChoiceBox) {
+                int selectedIndex = avatarSelection.getSelectionModel().getSelectedIndex();
+                changeAvatarImage(selectedIndex);
+            }
+        }
+    }
+
     private class ConnectButtonHandler implements EventHandler<ActionEvent>{
         @Override
         public void handle(ActionEvent event) {
@@ -165,20 +185,37 @@ public class FirstView extends VBox{
                 InetAddress inetAddress = InetAddress.getByName(inetAddressTF.getText());
                 int port = Integer.parseInt(portTF.getText());
                 String nickname = nicknameTF.getText();
-
-                if(inetAddress != null && port > 0 && port <= 65535 && !nickname.isEmpty()) {
-                    if(!nickname.contains("¤")) {
-                        boolean success = clientGUI.getCommunicationCallsFromGUI().connectToServer(inetAddress, port, nickname);
-                        if(success) {
-                            clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
+                String avatar = availableAvatars.get(avatarSelection.getSelectionModel().getSelectedIndex());
+                if(inetAddress != null) {
+                    if(port > 0 && port <= 65535) {
+                        if(!nickname.isEmpty()) {
+                            if(!nickname.contains("¤")) {
+                                if(avatar != null && !avatar.isEmpty()) {
+                                    boolean success = clientGUI.getCommunicationCallsFromGUI().connectToServer(inetAddress, port, nickname, avatar);
+                                    if(success) {
+                                        clientGUI.changeView(ClientGUI.CHAT_ROOM_VIEW);
+                                    } else {
+                                        // TODO show in gui
+                                        System.out.println("Failed to connect to server");
+                                    }
+                                } else {
+                                    // TODO show message in GUI
+                                }
+                            } else {
+                                // TODO show message in GUI
+                                System.out.println("Nickname contains unallowed character ¤");
+                            }
                         } else {
-                            // TODO show in gui
-                            System.out.println("Failed to connect to server");
+                            // TODO show message in GUI
+                            System.out.println("Nickname is empty");
                         }
                     } else {
-                        // TODO show in gui
-                        System.out.println("Nickname contains unallowed character ¤");
+                        // TODO show message in GUI
+                        System.out.println("Illegal port");
                     }
+                } else {
+                    // TODO show message in GUI
+                    System.out.println("Problem with inet address");
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();

@@ -14,7 +14,7 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
     }
 
     @Override
-    public boolean connectToServer(InetAddress inetAddress, int port, String nickname) {
+    public boolean connectToServer(InetAddress inetAddress, int port, String nickname, String avatar) {
         // TODO connect to server
         boolean successfulConnect = true;
         if(successfulConnect) {
