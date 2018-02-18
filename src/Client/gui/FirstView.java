@@ -13,8 +13,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class FirstView extends VBox{
     // Size for this view only
@@ -24,6 +27,12 @@ public class FirstView extends VBox{
     private final int INSETS = 10;
     private final int SPACING = 10;
 
+    private final String AVATAR_FOLDER_PATH_FOR_FILE = "res/avatars/";
+    private final String AVATAR_FOLDER_PATH_FOR_JAVAFX = "file:res/avatars/";
+
+    private ArrayList<String> availableAvatars;
+    private ArrayList<String> availableAvatarsNoEnding;
+
     private ClientGUI clientGUI;
 
     private PPTextField inetAddressTF;
@@ -32,6 +41,10 @@ public class FirstView extends VBox{
 
     public FirstView(ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
+
+        availableAvatars = getAvailableAvatars();
+        availableAvatarsNoEnding = getAvailableAvatarsNoEnding();
+
         containerSettings();
         initComponents();
     }
@@ -88,22 +101,61 @@ public class FirstView extends VBox{
         Label avatar = new Label("Avatar");
         avatarCenter.getChildren().add(avatar);
 
-        ObservableList<String> avatars = FXCollections.observableArrayList("Avatar 1", "Avatar 2", "Avatar 3", "Avatar 4");
+        ObservableList<String> avatars = FXCollections.observableArrayList(availableAvatarsNoEnding);
         ChoiceBox<String> avatarSelection = new ChoiceBox<>(avatars);
         avatarSelection.getSelectionModel().selectFirst();
 
-        ImageView avatarIV = new ImageView("test.jpg");
-        avatarIV.setFitWidth(WIDTH * 0.2);
-        avatarIV.setPreserveRatio(true);
-        avatarIV.setSmooth(true);
-        avatarIV.setCache(true);
+        ImageView avatarIV = null;
+        try {
+            String firstImagePath = AVATAR_FOLDER_PATH_FOR_JAVAFX + availableAvatars.get(0);
+            avatarIV = new ImageView(firstImagePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        innerSideSplitPanel.getChildren().addAll(avatarSelection, avatarIV);
+        if(avatarIV != null) {
+            avatarIV.setFitWidth(WIDTH * 0.2);
+            avatarIV.setPreserveRatio(true);
+            avatarIV.setSmooth(true);
+            avatarIV.setCache(true);
+            innerSideSplitPanel.getChildren().addAll(avatarSelection, avatarIV);
+        } else {
+            innerSideSplitPanel.getChildren().addAll(avatarSelection);
+        }
+
         sidePanel.getChildren().addAll(avatarCenter, innerSideSplitPanel);
 
         splitPanel.getChildren().addAll(inputFieldsPanel, sidePanel);
 
         getChildren().add(splitPanel);
+    }
+
+    private ArrayList<String> getAvailableAvatars() {
+        File imageFolder = new File(AVATAR_FOLDER_PATH_FOR_FILE);
+        File[] listOfFiles = imageFolder.listFiles();
+        ArrayList<String> fileNames = new ArrayList<>();
+        if(listOfFiles != null) {
+            for(File f : listOfFiles) {
+                fileNames.add(f.getName());
+            }
+        } else {
+            System.out.println("Found no avatar images");
+        }
+        return fileNames;
+    }
+
+    private ArrayList<String> getAvailableAvatarsNoEnding() {
+        File imageFolder = new File(AVATAR_FOLDER_PATH_FOR_FILE);
+        File[] listOfFiles = imageFolder.listFiles();
+        ArrayList<String> fileNames = new ArrayList<>();
+        if(listOfFiles != null) {
+            for(File f : listOfFiles) {
+                fileNames.add(f.getName().split("[.]")[0]);
+            }
+        } else {
+            System.out.println("Found no avatar images");
+        }
+        return fileNames;
     }
 
     private class ConnectButtonHandler implements EventHandler<ActionEvent>{
