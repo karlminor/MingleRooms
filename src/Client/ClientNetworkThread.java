@@ -17,7 +17,7 @@ public class ClientNetworkThread extends Thread {
 
         // TODO temporary code for testing
         users.add(new User(1, "Pelle", "avatar1.jpg", 1, 3, 4));
-        users.add(new User(1, "Nisse", "avatar1.jpg", 1, 0, 0));
+        users.add(new User(1, "Nisse", "avatar2.jpg", 1, 0, 0));
         chatMessages.add("18:32:15 Pelle: Hejsan!");
         chatMessages.add("18:32:28 Nisse: Tjena Pelle!");
         chatMessages.add("18:32:42 Pelle: Hur är läget?");
