@@ -9,8 +9,8 @@ import java.net.Socket;
 
 public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI {
     private ChatRoomView chatRoomView;
-    Socket socket;
-    BufferedWriter output;
+    private Socket socket;
+    private BufferedWriter output;
 
     // See the interface CommunicationCallsFromGUI for descriptions/notes
 

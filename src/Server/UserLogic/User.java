@@ -65,7 +65,13 @@ public class User extends Thread {
 
     //The first message from client must be format "name¤avatar" to set this up for the server. The server replies with the user's id as id
     public boolean setupConnection() throws IOException {
-        String message = input.readLine();
+        String message = null;
+        while(message==null) {
+        	try {
+    			message = input.readLine();
+    		} catch (IOException|NullPointerException e) {}
+        }
+		
         if(message.matches(".*¤.*")){
             String msg[] = message.split("¤");
             name = msg[0];

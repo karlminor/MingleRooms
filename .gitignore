@@ -32,3 +32,4 @@ out/
 
 # Exclude gitignore file
 !/.gitignore
+/bin/
