@@ -31,6 +31,8 @@ public class ChatRoomView extends HBox {
     private TextArea chat;
     private TextArea message;
     private ObservableList<String> friendsOnlineList;
+    private TextArea chatRoomJoinLeaveHistory;
+    private Button send;
 
     private final int BOARD_X_TILES = 5;
     private final int BOARD_Y_TILES = 5;
@@ -61,9 +63,19 @@ public class ChatRoomView extends HBox {
         Label friendsLB = new Label("Friends");
         innerTopPanel.getChildren().add(friendsLB);
 
+        VBox innerCenterPanel = new VBox();
+        innerCenterPanel.setSpacing(SPACING);
         friendsOnlineList = FXCollections.observableArrayList();
         ListView<String> friendsOnlineLV = new ListView<>(friendsOnlineList);
         friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
+
+        TextArea chatRoomJoinLeaveHistory = new TextArea();
+        chatRoomJoinLeaveHistory.setEditable(false);
+        chatRoomJoinLeaveHistory.setPrefHeight(HEIGHT * 0.51);
+        chatRoomJoinLeaveHistory.setOnKeyPressed(new KeyboardHandler());
+        chatRoomJoinLeaveHistory.setPromptText("Chat room users join/leave history");
+
+        innerCenterPanel.getChildren().addAll(friendsOnlineLV, chatRoomJoinLeaveHistory);
 
         Button disconnectB = new Button("Disconnect");
         disconnectB.setOnAction(new DisconnectButtonHandler());
@@ -71,11 +83,11 @@ public class ChatRoomView extends HBox {
         disconnectB.setPrefWidth(leftSidePanel.getPrefWidth());
 
         leftSidePanel.setTop(innerTopPanel);
-        leftSidePanel.setCenter(friendsOnlineLV);
+        leftSidePanel.setCenter(innerCenterPanel);
         leftSidePanel.setBottom(disconnectB);
 
         BorderPane.setMargin(innerTopPanel, new Insets(0, 0, INSETS, 0));
-        BorderPane.setMargin(friendsOnlineLV, new Insets(0, 0, INSETS, 0));
+        BorderPane.setMargin(innerCenterPanel, new Insets(0, 0, INSETS, 0));
         BorderPane.setMargin(disconnectB, new Insets(0, 0, 0, 0));
         return leftSidePanel;
     }
@@ -147,11 +159,12 @@ public class ChatRoomView extends HBox {
         HBox innerBottomPanel = new HBox();
         innerBottomPanel.setSpacing(SPACING);
         message = new TextArea();
+        message.setOnKeyPressed(new MessageKeyboardHandler());
         message.setWrapText(true);
         message.setPromptText("Enter a chat message");
         message.setPrefHeight(HEIGHT * 0.15);
         message.setPrefWidth(WIDTH * 0.65);
-        Button send = new Button("Send");
+        send = new Button("Send");
         send.setOnAction(new SendMessageButtonHandler());
         send.setPrefWidth(WIDTH * 0.15);
         send.setPrefHeight(message.getPrefHeight());
@@ -211,6 +224,13 @@ public class ChatRoomView extends HBox {
         chat.setScrollTop(Double.MAX_VALUE);
     }
 
+    public void updateChatRoomJoinLeaveHistory(ArrayList<String> history) {
+        chatRoomJoinLeaveHistory.clear();
+        for(String s : history) {
+            chatRoomJoinLeaveHistory.setText(chatRoomJoinLeaveHistory.getText() + s + "\n");
+        }
+    }
+
     private class KeyboardHandler implements EventHandler<KeyEvent> {
 
         @Override
@@ -233,8 +253,25 @@ public class ChatRoomView extends HBox {
                     System.out.println("RIGHT");
                     clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.RIGHT);
                     break;
+                case ENTER:
+                    System.out.println("ENTER");
+                    send.fire();
+                    break;
             }
             event.consume();
+        }
+    }
+
+    private class MessageKeyboardHandler implements EventHandler<KeyEvent> {
+
+        @Override
+        public void handle(KeyEvent event) {
+            switch (event.getCode()) {
+                case ENTER:
+                    send.fire();
+                    event.consume();
+                    break;
+            }
         }
     }
 
@@ -255,6 +292,7 @@ public class ChatRoomView extends HBox {
         public void handle(ActionEvent event) {
             String text = message.getText();
             if(text != null && !text.isEmpty()) {
+                text = text.replaceAll("¤", "");
                 if(clientGUI.getCommunicationCallsFromGUI().sendMessage(text)) {
                     message.setText("");
                 } else {

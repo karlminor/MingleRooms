@@ -86,9 +86,9 @@ public class FirstView extends VBox{
         buttonCenter.getChildren().add(connectB);
 
         // TODO temp values (can be removed)
-        inetAddressTF.setText("192.168.0.1");
+        inetAddressTF.setText("localhost");
         portTF.setText("30000");
-        nicknameTF.setText("SampleNickname");
+        nicknameTF.setText("Nickname");
 
         inputFieldsPanel.getChildren().addAll(titleCenter, inetAddressTF, portTF, nicknameTF, buttonCenter);
 
