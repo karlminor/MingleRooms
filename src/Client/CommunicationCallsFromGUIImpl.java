@@ -1,11 +1,16 @@
 package Client;
 
 import Client.gui.ChatRoomView;
-
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
+import java.net.Socket;
 
 public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI {
     private ChatRoomView chatRoomView;
+    Socket socket;
+    BufferedWriter output;
 
     // See the interface CommunicationCallsFromGUI for descriptions/notes
 
@@ -15,30 +20,66 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
 
     @Override
     public boolean connectToServer(InetAddress inetAddress, int port, String nickname, String avatar) {
-        // TODO connect to server
-        boolean successfulConnect = true;
-        if(successfulConnect) {
-            // Start a new thread to handle network reads
-            ClientMain.startNetworkThread(chatRoomView);
+    	try {
+            socket = new Socket(inetAddress, port);
+            output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            output.write(nickname + "¤" + avatar + "\n");
+            output.flush();
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-        return successfulConnect;
     }
 
     @Override
     public boolean disconnectFromServer() {
-        // TODO
-        return false;
+    	try {
+    		output.write("Q\n");
+    		output.flush();
+			socket.close();
+			output.close();
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
     }
 
     @Override
     public boolean sendMessage(String message) {
-        // TODO
-        return false;
+    	try {
+			output.write("M" + message + "\n");
+			output.flush();
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
     }
 
     @Override
     public void move(int direction) {
-        // TODO
+        String message = "0¤0";
+        
+    	switch (direction) {
+		case UP:
+			message = "0¤-1";
+			break;
+		case DOWN:
+			message = "0¤1";
+			break;
+		case LEFT:
+			message = "-1¤0";
+			break;
+		case RIGHT:
+			message = "1¤0";
+			break;
+		}
+    	
+    	try {
+			output.write("P" + message + "\n");
+			output.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
