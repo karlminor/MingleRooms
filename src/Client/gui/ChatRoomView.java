@@ -1,6 +1,7 @@
 package Client.gui;
 
 import Client.CommunicationCallsFromGUI;
+import Client.P2PConnection;
 import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,13 +9,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ChatRoomView extends HBox {
     // Size for this view only
@@ -306,8 +310,34 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(ActionEvent event) {
-            // TODO
-            clientGUI.showPopup(Alert.AlertType.INFORMATION, "Not yet implemented", "Not yet implemented", "...");
+            Stage stage = new Stage();
+            stage.setTitle("Peer-to-peer chat");
+
+
+            String otherUserName = "TEMP";
+            // TODO Get the user that we want to communicate with from the friends list and then get their id
+            int idOtherUser = 0;
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm P2P");
+            alert.setHeaderText("Do you wish to start a p2p-connection with " + otherUserName + "?");
+            alert.setContentText("If you still want to start a p2p-connection, but not with " + otherUserName + ", then select the user you wish to communicate with from the friend list.");
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if(result.isPresent()) {
+                if(!result.get().getButtonData().isCancelButton()) {
+                    P2PConnection p2pConnection = clientGUI.getCommunicationCallsFromGUI().startP2PChat(idOtherUser);
+                    if(p2pConnection !=null) {
+                        // TODO Show P2P view
+
+                    }
+                    P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
+                    Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
+                    stage.setScene(scene);
+                    stage.show();
+                }
+
+            }
         }
     }
 

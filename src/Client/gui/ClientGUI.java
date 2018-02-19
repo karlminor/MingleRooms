@@ -78,7 +78,6 @@ public class ClientGUI extends Application {
         alert.setTitle(title);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
-
         alert.showAndWait();
     }
 }
