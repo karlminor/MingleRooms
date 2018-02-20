@@ -1,5 +1,6 @@
 package Client.gui;
 
+import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.CommunicationCallsFromGUIImpl;
 import javafx.application.Application;
@@ -56,6 +57,7 @@ public class ClientGUI extends Application {
             case CHAT_ROOM_VIEW:
                 root.setCenter(chatRoomView);
                 setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
+                ClientMain.startNetworkThread(chatRoomView);
                 break;
         }
     }

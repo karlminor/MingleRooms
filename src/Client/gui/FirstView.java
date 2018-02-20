@@ -28,7 +28,7 @@ public class FirstView extends VBox{
     private final int INSETS = 10;
     private final int SPACING = 10;
 
-    private final String AVATAR_FOLDER_PATH_FOR_FILE = "res/avatars/";
+    private static final String AVATAR_FOLDER_PATH_FOR_FILE = "res/avatars/";
     public final static String AVATAR_FOLDER_PATH_FOR_JAVAFX = "file:res/avatars/";
 
     private ArrayList<String> availableAvatars;
@@ -133,7 +133,7 @@ public class FirstView extends VBox{
         getChildren().add(splitPanel);
     }
 
-    private ArrayList<String> getAvailableAvatars() {
+    public static ArrayList<String> getAvailableAvatars() {
         File imageFolder = new File(AVATAR_FOLDER_PATH_FOR_FILE);
         File[] listOfFiles = imageFolder.listFiles();
         ArrayList<String> fileNames = new ArrayList<>();
@@ -147,7 +147,7 @@ public class FirstView extends VBox{
         return fileNames;
     }
 
-    private ArrayList<String> getAvailableAvatarsNoEnding() {
+    public static ArrayList<String> getAvailableAvatarsNoEnding() {
         File imageFolder = new File(AVATAR_FOLDER_PATH_FOR_FILE);
         File[] listOfFiles = imageFolder.listFiles();
         ArrayList<String> fileNames = new ArrayList<>();

@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class ChatRoomView extends HBox {
@@ -37,6 +38,9 @@ public class ChatRoomView extends HBox {
     private ObservableList<String> friendsOnlineList;
     private TextArea chatRoomJoinLeaveHistory;
     private Button send;
+
+    private boolean createAvatarImages = true;
+    private HashMap<String, Image> avatarImages;
 
     private final int BOARD_X_TILES = 5;
     private final int BOARD_Y_TILES = 5;
@@ -116,6 +120,8 @@ public class ChatRoomView extends HBox {
         board.setBackground(new Background(new BackgroundFill(Color.rgb(255,255,255, 1), null, null)));
         board.setMaxWidth(HEIGHT * 0.55);
         board.setMaxHeight(HEIGHT * 0.55);
+        board.setMinWidth(HEIGHT * 0.55);
+        board.setMinHeight(HEIGHT * 0.55);
         boardTextAreas = new ArrayList<>();
         for(int y = 0; y < BOARD_Y_TILES; y++) {
             for(int x = 0; x < BOARD_X_TILES; x++) {
@@ -205,10 +211,34 @@ public class ChatRoomView extends HBox {
     }
 
     public void displayCharactersInGUI(ArrayList<User> users) {
+        if(createAvatarImages) {
+            createAvatarImages();
+            createAvatarImages = false;
+        }
         clearBoard();
         // TODO check if users are in this chat room
         for(User u : users) {
-            drawIconInBoard(u.getX(), u.getY(), u.getAvatar(), u.getNickname());
+            Image avatar = avatarImages.get(u.getAvatarName());
+            if(avatar != null) {
+                drawIconInBoard(u.getX(), u.getY(), avatar, u.getNickname());
+            } else {
+                System.out.println("Problem drawing avatar...");
+            }
+        }
+    }
+
+    private void createAvatarImages() {
+        ArrayList<String> avatars = FirstView.getAvailableAvatars();
+        avatarImages = new HashMap<>();
+        double width = boardTextAreas.get(0).getWidth();
+        double height = boardTextAreas.get(0).getHeight();
+        for(String fileName : avatars) {
+            try {
+                Image avatarImage = new Image(FirstView.AVATAR_FOLDER_PATH_FOR_JAVAFX + fileName, width, height, false, true);
+                avatarImages.put(fileName, avatarImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
