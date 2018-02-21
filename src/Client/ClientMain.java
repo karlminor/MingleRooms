@@ -15,7 +15,7 @@ public class ClientMain {
     }
 
     // Is started from GUI if connection to server is successful
-    public static void startNetworkThread(ChatRoomView chatRoomView) {
-        new ClientNetworkThread(chatRoomView).start();
+    public static void startNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
+        new ClientNetworkThread(chatRoomView, clientGUI).start();
     }
 }

@@ -57,7 +57,7 @@ public class ClientGUI extends Application {
             case CHAT_ROOM_VIEW:
                 root.setCenter(chatRoomView);
                 setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
-                ClientMain.startNetworkThread(chatRoomView);
+                ClientMain.startNetworkThread(chatRoomView, this);
                 break;
         }
     }

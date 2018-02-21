@@ -1,34 +1,57 @@
 package Client;
 
 import Client.gui.ChatRoomView;
+import Client.gui.ClientGUI;
+import Server.MessageLogic.Message;
 import javafx.application.Platform;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ClientNetworkThread extends Thread {
+    private ClientGUI clientGUI;
     private ChatRoomView chatRoomView;
     private volatile ArrayList<User> users; // volatile = thread safe
     private volatile ArrayList<String> chatMessages;
+    private BufferedReader input;
+    
 
-    public ClientNetworkThread(ChatRoomView chatRoomView) {
-        this.chatRoomView = chatRoomView;
+    public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
+    	this.chatRoomView = chatRoomView;
+        this.clientGUI = clientGUI;
         chatMessages = new ArrayList<>();
         users = new ArrayList<>();
+    	
+        try {
+   		 input = new BufferedReader(new InputStreamReader(clientGUI.getCommunicationCallsFromGUI().getSocket().getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
     }
 
     public void run() {
         while(true) {
-            String message = read();
-            decodeMessage(message);
+            String message;
+			try {
+				message = read();
+				decodeMessage(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
         }
     }
 
     /**
      * Read messages from server.
+     * @throws IOException 
      */
-    public String read() {
-        // TODO
-        return null;
+    public String read() throws IOException {
+    	return input.readLine();
     }
 
     /**
@@ -37,6 +60,28 @@ public class ClientNetworkThread extends Thread {
     public void decodeMessage(String message) {
         // TODO
         // e.g. run displayCharactersInGUI() if message received was a character move update
+    	String msg[];
+    	char identifier = message.charAt(0);
+        message = message.substring(1);
+        System.out.println(identifier);
+        System.out.println(message);
+        switch (identifier) {
+            case ('P'):
+                msg = message.split("¤");
+                break;
+            case ('R'):
+                msg = message.split("¤");
+                break;
+            case ('M'):
+            	msg = message.split("¤");
+            	chatMessages.add(msg[0] + ": " + msg[1]);
+                chatRoomView.updateChat(chatMessages);
+                break;
+            case ('Q'):
+                break;
+            default:
+                break;
+        }
     }
 
     /**

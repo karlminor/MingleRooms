@@ -1,6 +1,7 @@
 package Client;
 
 import java.net.InetAddress;
+import java.net.Socket;
 
 public interface CommunicationCallsFromGUI {
     public static final int UP = 0;
@@ -28,5 +29,7 @@ public interface CommunicationCallsFromGUI {
 
     // TODO Not supported in GUI yet
     public boolean enterChatRoom(int chatRoomNumber);
+    
+    public Socket getSocket();
 
 }

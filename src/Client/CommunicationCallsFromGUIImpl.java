@@ -93,4 +93,8 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
         // TODO
         return false;
     }
+    
+    public Socket getSocket() {
+    	return socket;
+    }
 }

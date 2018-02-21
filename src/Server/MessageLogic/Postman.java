@@ -67,7 +67,7 @@ public class Postman extends Thread{
                                 break;
                         }
 
-                        u.echo(message.text);
+                       // u.echo(message.text);
                     } else {
                         users.remove(u);
                         //Perform a clean up telling all users that the user disconnected etc

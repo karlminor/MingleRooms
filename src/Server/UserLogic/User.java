@@ -109,7 +109,7 @@ public class User extends Thread {
                 mailbox.deposit(new Message(this, "R" + currentRoom + "¤" + x + "¤" + y));
                 break;
             case ('M'):
-                mailbox.deposit(new Message(this, "M" + id + "¤" + message));
+                mailbox.deposit(new Message(this, "M" + name + "¤" + message));
                 break;
             case ('Q'):
                 broadcast("S" + name + " has left the server");
