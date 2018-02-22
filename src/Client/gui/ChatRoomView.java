@@ -219,7 +219,12 @@ public class ChatRoomView extends HBox {
                     if(currentTooltip != null) {
                         currentTooltip.setText("");
                     }
-                    currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
+                    if(client.getChatRoom() == 0) {
+                        // Only set numbers on tiles if we are in the main room
+                        currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
+                    } else {
+                        currentTile.setText("");
+                    }
                 } else {
                     System.out.println("Current tile is null");
                 }
@@ -272,10 +277,14 @@ public class ChatRoomView extends HBox {
                     System.out.println("Problem drawing avatar...");
                 }
                 if(u == client) {
-                    updateEnterRoomButton();
+                    if(u.getChatRoom() == 0) {
+                        // Only update enter chat room button if the client is in the main chat room
+                        updateEnterRoomButton();
+                    }
                 }
             }
         }
+
     }
 
     private void createAvatarImages() {
@@ -328,6 +337,7 @@ public class ChatRoomView extends HBox {
     private void updateEnterRoomButton() {
         int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
         enterChatRoomB.setText("Enter chat room: " + selectedChatRoom);
+        System.out.println("TEXT: Enter chat room: " + selectedChatRoom);
     }
 
     public void setClient(User client) {
@@ -398,10 +408,12 @@ public class ChatRoomView extends HBox {
             String text = message.getText();
             if(text != null && !text.isEmpty()) {
                 text = text.replaceAll("¤", "");
-                if(clientGUI.getCommunicationCallsFromGUI().sendMessage(text)) {
-                    message.setText("");
-                } else {
-                    clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to send message to server", "...");
+                if(!text.isEmpty()) {
+                    if(clientGUI.getCommunicationCallsFromGUI().sendMessage(text)) {
+                        message.setText("");
+                    } else {
+                        clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to send message to server", "...");
+                    }
                 }
             }
         }
@@ -442,30 +454,48 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    // TODO Close connection on exit button pressed..
-
     private class EnterChatRoomHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
-            int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
+            if(client.getChatRoom() == 0) {
+                // Client is inside main room -> Disconnect from server
+                int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm chat room change");
+                alert.setHeaderText("Do you wish to enter chat room " + selectedChatRoom + "?");
+                Optional<ButtonType> result = alert.showAndWait();
 
+                if(result.isPresent()) {
+                    if(!result.get().getButtonData().isCancelButton()) {
+                        boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
+                        clearBoard(); // TODO Is there a risk that this will hide the character?
+                        if(success) {
+                            enterChatRoomB.setText("Leave chat room " + selectedChatRoom);
+                        } else {
+                            clientGUI.showPopup(Alert.AlertType.INFORMATION, "Issues with connection", "Failed to enter chat room", "...");
+                        }
+                    }
+                }
+            } else {
+                // Client is not inside main room -> Leave chat room and join main room
+                // TODO dialog before leaving room
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm chat room change");
+                alert.setHeaderText("Are you sure that you want to leave your current room and enter the main chat room?");
+                Optional<ButtonType> result = alert.showAndWait();
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirm chat room change");
-            alert.setHeaderText("Do you wish to enter chat room " + selectedChatRoom + "?");
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if(result.isPresent()) {
-                if(!result.get().getButtonData().isCancelButton()) {
-                    boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
-                    if(!success) {
-                        clientGUI.showPopup(Alert.AlertType.INFORMATION, "Issues with connection", "Failed to enter chat room", "...");
-                        // TODO Change disconnect button to leave chat room.
+                if(result.isPresent()) {
+                    if(!result.get().getButtonData().isCancelButton()) {
+                        boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(0);
+                        if(success) {
+                            updateEnterRoomButton();
+                        } else {
+                            clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to leave current chat room", "...");
+                        }
                     }
                 }
             }
         }
     }
-
 }

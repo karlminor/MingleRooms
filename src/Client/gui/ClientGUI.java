@@ -39,7 +39,7 @@ public class ClientGUI extends Application {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                System.exit(0);
+                Platform.exit();
             }
         });
 
@@ -88,5 +88,13 @@ public class ClientGUI extends Application {
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();
+    }
+
+    @Override
+    public void stop() {
+        if(communicationCallsFromGUI != null) {
+            communicationCallsFromGUI.disconnectFromServer();
+            System.exit(0);
+        }
     }
 }
