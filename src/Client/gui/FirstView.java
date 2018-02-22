@@ -1,5 +1,6 @@
 package Client.gui;
 
+import Client.CommunicationCallsFromGUI;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,8 +13,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -41,6 +45,7 @@ public class FirstView extends VBox{
     private PPTextField nicknameTF;
     private ChoiceBox<String> avatarSelection;
     private ImageView avatarIV = null;
+    private Button connectB;
 
     public FirstView(ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
@@ -59,7 +64,6 @@ public class FirstView extends VBox{
     }
 
     private void initComponents() {
-
         HBox splitPanel = new HBox();
         splitPanel.setAlignment(Pos.CENTER);
         splitPanel.setSpacing(SPACING);
@@ -75,12 +79,15 @@ public class FirstView extends VBox{
         titleCenter.getChildren().add(title);
 
         inetAddressTF = new PPTextField("Internet address");
+        inetAddressTF.setOnKeyPressed(new KeyboardHandler());
         portTF = new PPTextField("Port");
+        portTF.setOnKeyPressed(new KeyboardHandler());
         nicknameTF = new PPTextField("Nickname");
+        nicknameTF.setOnKeyPressed(new KeyboardHandler());
 
         HBox buttonCenter = new HBox();
         buttonCenter.setAlignment(Pos.CENTER);
-        Button connectB = new Button("Connect");
+        connectB = new Button("Connect");
         connectB.setPrefWidth(WIDTH * 0.20);
         connectB.setOnAction(new ConnectButtonHandler());
         buttonCenter.getChildren().add(connectB);
@@ -108,6 +115,7 @@ public class FirstView extends VBox{
         avatarSelection = new ChoiceBox<>(avatars);
         avatarSelection.getSelectionModel().selectFirst();
         avatarSelection.setOnAction(new AvatarSelectionHandler());
+        avatarSelection.setOnKeyPressed(new KeyboardHandler());
 
         try {
             String firstImagePath = AVATAR_FOLDER_PATH_FOR_JAVAFX + availableAvatars.get(0);
@@ -176,6 +184,20 @@ public class FirstView extends VBox{
                 int selectedIndex = avatarSelection.getSelectionModel().getSelectedIndex();
                 changeAvatarImage(selectedIndex);
             }
+        }
+    }
+
+    private class KeyboardHandler implements EventHandler<KeyEvent> {
+
+        @Override
+        public void handle(KeyEvent event) {
+            switch (event.getCode()) {
+                case ENTER:
+                    System.out.println("ENTER");
+                    connectB.fire();
+                    break;
+            }
+            event.consume();
         }
     }
 
