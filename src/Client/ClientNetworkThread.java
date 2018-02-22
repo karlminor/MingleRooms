@@ -66,7 +66,13 @@ public class ClientNetworkThread extends Thread {
         System.out.println(message);
         switch (identifier) {
             case ('P'):
-                msg = message.split("¤");
+            	msg = message.split("¤");
+            	for(User u: users){
+            		if(u.equals(myUser)){
+            			u.setX(Integer.valueOf(msg[0]));
+            			u.setY(Integer.valueOf(msg[1]));
+            		}
+            	}
                 break;
             case ('R'):
                 msg = message.split("¤");
@@ -74,7 +80,7 @@ public class ClientNetworkThread extends Thread {
             case ('M'):
             	msg = message.split("¤");
             	chatMessages.add(msg[0] + ": " + msg[1]);
-                chatRoomView.updateChat(chatMessages);
+                updateGUIChat();
                 break;
             case ('Q'):
                 break;
@@ -87,7 +93,7 @@ public class ClientNetworkThread extends Thread {
      * Call this method everytime a user moves.
      * The method that is called in the GUI will handle clearing the screen and rendering.
      */
-    public void updateGUICharacters(ArrayList<User> users){
+    public void updateGUICharacters(){
         // This will add an update to the GUI in the GUI thread's que. GUI will handle update when there is time.
         // https://stackoverflow.com/questions/13784333/platform-runlater-and-task-in-javafx
         Platform.runLater(new Runnable() {
@@ -98,7 +104,7 @@ public class ClientNetworkThread extends Thread {
         });
     }
 
-    public void updateFriendsOnline(ArrayList<User> users) {
+    public void updateFriendsOnline() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -107,7 +113,7 @@ public class ClientNetworkThread extends Thread {
         });
     }
 
-    public void updateGUIChat(ArrayList<String> chatMessages) {
+    public void updateGUIChat() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -130,7 +136,7 @@ public class ClientNetworkThread extends Thread {
     		users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
     		length--;
     	}
-    	chatRoomView.updateFriendsOnline(users);
-    	chatRoomView.displayCharactersInGUI(users);
+    	updateFriendsOnline();
+    	updateGUICharacters();
     }
 }
