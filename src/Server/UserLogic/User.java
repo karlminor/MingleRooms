@@ -17,8 +17,8 @@ public class User extends Thread {
     private String avatar;
     private int id;
 
-    private double x;
-    private double y;
+    private int x;
+    private int y;
 
     private int currentRoom;
 
@@ -57,7 +57,7 @@ public class User extends Thread {
                 handleConnection();
             }
 
-        } catch (IOException|InterruptedException e) {
+        } catch (IOException|InterruptedException|NullPointerException e) {
             System.out.println(name + " has left");
             status = false;
         }
@@ -82,7 +82,7 @@ public class User extends Thread {
         return false;
     }
 
-    private void handleConnection() throws InterruptedException, IOException {
+    private void handleConnection() throws InterruptedException, IOException, NullPointerException {
         String message = input.readLine();
         String msg[];
 
@@ -99,13 +99,13 @@ public class User extends Thread {
         switch (identifier) {
             case ('P'):
                 msg = message.split("¤");
-                updatePosition(Double.parseDouble(msg[0]), Double.parseDouble(msg[1]));
+                updatePosition(Integer.parseInt(msg[0]), Integer.parseInt(msg[1]));
                 mailbox.deposit(new Message(this, "P" + id + "¤" + x + "¤" + y));
                 break;
             case ('R'):
                 msg = message.split("¤");
                 joinRoom(Integer.parseInt(msg[0]));
-                setPosition(Double.parseDouble(msg[1]), Double.parseDouble(msg[2]));
+                setPosition(Integer.parseInt(msg[1]), Integer.parseInt(msg[2]));
                 mailbox.deposit(new Message(this, "R" + currentRoom + "¤" + x + "¤" + y));
                 break;
             case ('M'):
@@ -138,13 +138,13 @@ public class User extends Thread {
     }
 
     //This function is used only when a user joins a new room
-    public void setPosition(double x, double y){
+    public void setPosition(int x, int y){
         this.x = x;
         this.y = y;
     }
 
     public String[] getInfo(){
-        String[] info = {Integer.toString(id), name, avatar, Integer.toString(currentRoom), Double.toString(x), Double.toString(y)};
+        String[] info = {Integer.toString(id), name, avatar, Integer.toString(currentRoom), Integer.toString(x), Integer.toString(y)};
         return info;
     }
 
