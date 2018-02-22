@@ -461,6 +461,7 @@ public class ChatRoomView extends HBox {
                     boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
                     if(!success) {
                         clientGUI.showPopup(Alert.AlertType.INFORMATION, "Issues with connection", "Failed to enter chat room", "...");
+                        // TODO Change disconnect button to leave chat room.
                     }
                 }
             }
