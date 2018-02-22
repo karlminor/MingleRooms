@@ -13,8 +13,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -126,11 +128,19 @@ public class ChatRoomView extends HBox {
         for(int y = 0; y < BOARD_Y_TILES; y++) {
             for(int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea temp = new TextArea(Integer.toString(x + y * BOARD_X_TILES + 1));
+                temp.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        // TODO
+                        System.out.println("I(SF()SHFHS");
+                    }
+                });
                 temp.setEditable(false);
                 temp.setWrapText(true);
                 temp.setId("boardTile");
                 temp.setMouseTransparent(true);
                 temp.setFocusTraversable(false);
+                temp.setFont(new Font(temp.getFont().getName(), temp.getFont().getSize() * 0.75));
                 board.add(temp, x, y);
                 boardTextAreas.add(temp);
             }
@@ -190,7 +200,7 @@ public class ChatRoomView extends HBox {
     private void clearBoard() {
         for (int y = 0; y < BOARD_Y_TILES; y++) {
             for (int x = 0; x < BOARD_X_TILES; x++) {
-                TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
+                TextArea currentTile = boardTextAreas.get(x + y * BOARD_X_TILES);
                 if(currentTile != null) {
                     if(currentTile.getBackground() != null) {
                         currentTile.setBackground(new Background(currentTile.getBackground().getFills(), null));
@@ -207,7 +217,7 @@ public class ChatRoomView extends HBox {
 
     private void drawIconInBoard(int x, int y, Image avatar, String nickname) {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
-            TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
+            TextArea currentTile = boardTextAreas.get(x + y * BOARD_X_TILES);
             if(avatar != null) {
                 BackgroundImage backgroundImage = new BackgroundImage(avatar, null, null, null, null);
                 ArrayList<BackgroundImage> backgroundImages = new ArrayList<>();

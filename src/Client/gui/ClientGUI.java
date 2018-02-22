@@ -62,7 +62,6 @@ public class ClientGUI extends Application {
                     @Override
                     public void run() {
                         ClientMain.startNetworkThread(chatRoomView, ClientGUI.this);
-                        System.out.println("HEJEJISWEHJIOASHfr");
                     }
                 });
                 break;

@@ -7,8 +7,9 @@
     -fx-background-color: transparent;
 }
 
-#boardTile .scroll-bar {
-    -fx-opacity: 0;
+#boardTile .scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
 }
 
 #boardTile .scroll-pane .viewport{
