@@ -127,6 +127,7 @@ public class ChatRoomView extends HBox {
             for(int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea temp = new TextArea(Integer.toString(x + y * BOARD_X_TILES + 1));
                 temp.setEditable(false);
+                temp.setWrapText(true);
                 temp.setId("boardTile");
                 temp.setMouseTransparent(true);
                 temp.setFocusTraversable(false);
@@ -191,17 +192,15 @@ public class ChatRoomView extends HBox {
             for (int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
                 if(currentTile != null) {
-                    Background currentBG = currentTile.getBackground();
-                    Background temp = null;
-                    if(currentBG != null) {
-                        temp = new Background(currentBG.getFills(), null);
-                    }
-                    if(temp != null) {
-                        currentTile.setBackground(temp);
+                    if(currentTile.getBackground() != null) {
+                        currentTile.setBackground(new Background(currentTile.getBackground().getFills(), null));
+                    } else {
+                        System.out.println("Background is null");
                     }
                     currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
+                } else {
+                    System.out.println("Current tile is null");
                 }
-
             }
         }
     }
@@ -210,7 +209,6 @@ public class ChatRoomView extends HBox {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
             TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
             if(avatar != null) {
-                // TODO Image is not scaled correctly
                 BackgroundImage backgroundImage = new BackgroundImage(avatar, null, null, null, null);
                 ArrayList<BackgroundImage> backgroundImages = new ArrayList<>();
                 backgroundImages.add(backgroundImage);
@@ -218,8 +216,13 @@ public class ChatRoomView extends HBox {
                 if(currentTile.getBackground() != null) {
                     currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
                 } else {
+                    /*
+                    System.out.println("Background in draw is null... Creating new");
                     currentTile.setBackground(new Background(backgroundImage));
+                    */
                 }
+            } else {
+                System.out.println("Avatar is null");
             }
             currentTile.setText(nickname);
         }

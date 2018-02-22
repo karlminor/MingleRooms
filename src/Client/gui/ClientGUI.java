@@ -4,6 +4,7 @@ import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.CommunicationCallsFromGUIImpl;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -57,7 +58,13 @@ public class ClientGUI extends Application {
             case CHAT_ROOM_VIEW:
                 root.setCenter(chatRoomView);
                 setSize(ChatRoomView.WIDTH, ChatRoomView.HEIGHT);
-                ClientMain.startNetworkThread(chatRoomView, this);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ClientMain.startNetworkThread(chatRoomView, ClientGUI.this);
+                        System.out.println("HEJEJISWEHJIOASHfr");
+                    }
+                });
                 break;
         }
     }
