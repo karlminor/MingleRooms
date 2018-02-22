@@ -6,7 +6,9 @@ import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -117,6 +119,14 @@ public class ChatRoomView extends HBox {
         // Board
         BorderPane innerCenterPanel = new BorderPane();
         board = new GridPane();
+        /*
+        board.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                System.out.println("Mouse caught");
+            }
+        });
+        */
         board.setPadding(new Insets(INSETS, INSETS, INSETS, INSETS));
         board.setGridLinesVisible(true);
         board.setBackground(new Background(new BackgroundFill(Color.rgb(255,255,255, 1), null, null)));
@@ -128,18 +138,19 @@ public class ChatRoomView extends HBox {
         for(int y = 0; y < BOARD_Y_TILES; y++) {
             for(int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea temp = new TextArea(Integer.toString(x + y * BOARD_X_TILES + 1));
-                temp.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                temp.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<Event>() {
                     @Override
-                    public void handle(MouseEvent event) {
-                        // TODO
-                        System.out.println("I(SF()SHFHS");
+                    public void handle(Event event) {
+                        event.consume();
                     }
                 });
                 temp.setEditable(false);
                 temp.setWrapText(true);
                 temp.setId("boardTile");
-                temp.setMouseTransparent(true);
+                temp.setTooltip(new Tooltip());
+                //temp.setMouseTransparent(true); NOT NEEDED (Event filter above will consume event)
                 temp.setFocusTraversable(false);
+                temp.getTooltip().setFont(Font.font(temp.getTooltip().getFont().getSize()));
                 temp.setFont(new Font(temp.getFont().getName(), temp.getFont().getSize() * 0.75));
                 board.add(temp, x, y);
                 boardTextAreas.add(temp);
@@ -207,6 +218,10 @@ public class ChatRoomView extends HBox {
                     } else {
                         System.out.println("Background is null");
                     }
+                    Tooltip currentTooltip = currentTile.getTooltip();
+                    if(currentTooltip != null) {
+                        currentTooltip.setText("");
+                    }
                     currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
                 } else {
                     System.out.println("Current tile is null");
@@ -233,6 +248,15 @@ public class ChatRoomView extends HBox {
                 }
             } else {
                 System.out.println("Avatar is null");
+            }
+
+            Tooltip currentTooltip = currentTile.getTooltip();
+            if(currentTooltip != null) {
+                if(!currentTooltip.getText().isEmpty()) {
+                    currentTooltip.setText(currentTooltip.getText() + ",\n" + nickname);
+                } else {
+                    currentTooltip.setText(nickname);
+                }
             }
             currentTile.setText(nickname);
         }
