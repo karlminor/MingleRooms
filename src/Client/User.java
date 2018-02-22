@@ -46,4 +46,7 @@ public class User {
     public void setY(int y) {
         this.y = y;
     }
+    public int getId(){
+    	return id;
+    }
 }

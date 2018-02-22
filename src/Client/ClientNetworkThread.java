@@ -16,7 +16,6 @@ public class ClientNetworkThread extends Thread {
     private volatile ArrayList<User> users; // volatile = thread safe
     private volatile ArrayList<String> chatMessages;
     private BufferedReader input;
-    private User myUser;
     
 
     public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
@@ -68,15 +67,21 @@ public class ClientNetworkThread extends Thread {
             case ('P'):
             	msg = message.split("¤");
             	for(User u: users){
-            		if(u.equals(myUser)){
-            			u.setX(Integer.valueOf(msg[0]));
-            			u.setY(Integer.valueOf(msg[1]));
+            		if(u.getId()==Integer.valueOf(msg[0])){
+            			u.setX(Integer.valueOf(msg[1]));
+            			u.setY(Integer.valueOf(msg[2]));
             		}
             	}
+            	updateGUICharacters();
                 break;
             case ('R'):
                 msg = message.split("¤");
                 break;
+            case ('N'):
+            	msg = message.split("¤");
+            	users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
+                updateGUICharacters();
+            	break;
             case ('M'):
             	msg = message.split("¤");
             	chatMessages.add(msg[0] + ": " + msg[1]);
@@ -125,9 +130,8 @@ public class ClientNetworkThread extends Thread {
     private void setup() throws IOException{
     	String message = input.readLine();
     	String msg[] = message.split("¤");
-    	
-    	myUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
-    	users.add(myUser);
+
+    	users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
     	
     	int length = Integer.parseInt(input.readLine());
     	while(length != 0){
