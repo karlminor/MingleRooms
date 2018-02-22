@@ -76,7 +76,6 @@ public class User extends Thread {
             String msg[] = message.split("¤");
             name = msg[0];
             avatar = msg[1];
-            echo(Integer.toString(id));
             return true;
         }
         return false;

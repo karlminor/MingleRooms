@@ -35,6 +35,8 @@ public class Users {
     public void setupConnection(User u) throws IOException {
         if (u.setupConnection()){
             String[] info;
+            info = u.getInfo();
+            u.echo("N¤" + info[0] + "¤" + info[1] + "¤" + info[2] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
             u.echo(Integer.toString(users.size()));
             for(User user : users){
                 info = user.getInfo();
