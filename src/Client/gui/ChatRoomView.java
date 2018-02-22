@@ -442,28 +442,28 @@ public class ChatRoomView extends HBox {
         }
     }
 
+    // TODO Close connection on exit button pressed..
+
     private class EnterChatRoomHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
             int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
 
-            /*
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirm P2P");
-            alert.setHeaderText("Do you wish to start a p2p-connection with " + otherUserName + "?");
-            alert.setContentText("If you still want to start a p2p-connection, but not with " + otherUserName + ", then select the user you wish to communicate with from the friend list.");
+            alert.setTitle("Confirm chat room change");
+            alert.setHeaderText("Do you wish to enter chat room " + selectedChatRoom + "?");
             Optional<ButtonType> result = alert.showAndWait();
 
             if(result.isPresent()) {
-
-            boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
-            if(!success) {
-
+                if(!result.get().getButtonData().isCancelButton()) {
+                    boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
+                    if(!success) {
+                        clientGUI.showPopup(Alert.AlertType.INFORMATION, "Issues with connection", "Failed to enter chat room", "...");
+                    }
+                }
             }
-            */
-            // TODO
-            clientGUI.showPopup(Alert.AlertType.INFORMATION, "Not yet implemented", "Not yet implemented", "...");
         }
     }
 
