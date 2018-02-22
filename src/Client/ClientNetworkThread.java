@@ -16,6 +16,7 @@ public class ClientNetworkThread extends Thread {
     private volatile ArrayList<User> users; // volatile = thread safe
     private volatile ArrayList<String> chatMessages;
     private BufferedReader input;
+    private User myUser;
     
 
     public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
@@ -26,6 +27,7 @@ public class ClientNetworkThread extends Thread {
     	
         try {
    		 input = new BufferedReader(new InputStreamReader(clientGUI.getCommunicationCallsFromGUI().getSocket().getInputStream()));
+   		setup();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,8 +41,6 @@ public class ClientNetworkThread extends Thread {
 				message = read();
 				decodeMessage(message);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
             
         }
@@ -63,7 +63,6 @@ public class ClientNetworkThread extends Thread {
     	String msg[];
     	char identifier = message.charAt(0);
         message = message.substring(1);
-        System.out.println(identifier);
         System.out.println(message);
         switch (identifier) {
             case ('P'):
@@ -115,5 +114,23 @@ public class ClientNetworkThread extends Thread {
                 chatRoomView.updateChat(chatMessages);
             }
         });
+    }
+    
+    private void setup() throws IOException{
+    	String message = input.readLine();
+    	String msg[] = message.split("¤");
+    	
+    	myUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
+    	users.add(myUser);
+    	
+    	int length = Integer.parseInt(input.readLine());
+    	while(length != 0){
+    		message = input.readLine();
+    		msg = message.split("¤");
+    		users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
+    		length--;
+    	}
+    	chatRoomView.updateFriendsOnline(users);
+    	chatRoomView.displayCharactersInGUI(users);
     }
 }
