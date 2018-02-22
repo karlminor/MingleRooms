@@ -27,7 +27,6 @@ public class Postman extends Thread{
                 message = mailbox.withdraw();
                 sender = message.sender;
                 text = message.text;
-                id = sender.getUserId();
                 for (User u : users.userList()){
                     if (u.status()) {
 
@@ -69,7 +68,7 @@ public class Postman extends Thread{
 
                     } else {
                         users.remove(u);
-                        //Perform a clean up telling all users that the user disconnected etc
+                        notifyExitAll(u);
                         u.interrupt();
                     }
                 }
@@ -77,6 +76,13 @@ public class Postman extends Thread{
             catch (IOException|InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void notifyExitAll(User u) throws IOException {
+        String[] info = u.getInfo();
+        for(User user : users.userList()){
+            user.echo("Q" + info[0]);
         }
     }
 }

@@ -111,7 +111,6 @@ public class User extends Thread {
                 mailbox.deposit(new Message(this, "M" + name + "¤" + message));
                 break;
             case ('Q'):
-                broadcast("S" + name + " has left the server");
                 disconnect();
                 break;
             default:
