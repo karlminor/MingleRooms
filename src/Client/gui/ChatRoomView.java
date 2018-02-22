@@ -354,19 +354,27 @@ public class ChatRoomView extends HBox {
             switch (event.getCode()) {
                 case UP:
                     System.out.println("UP");
-                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.UP);
+                    if(client.getY() > 0) {
+                        clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.UP);
+                    }
                     break;
                 case DOWN:
                     System.out.println("DOWN");
-                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.DOWN);
+                    if(client.getY() < BOARD_Y_TILES - 1) {
+                        clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.DOWN);
+                    }
                     break;
                 case LEFT:
                     System.out.println("LEFT");
-                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.LEFT);
+                    if(client.getX() > 0) {
+                        clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.LEFT);
+                    }
                     break;
                 case RIGHT:
                     System.out.println("RIGHT");
-                    clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.RIGHT);
+                    if(client.getX() < BOARD_X_TILES - 1) {
+                        clientGUI.getCommunicationCallsFromGUI().move(CommunicationCallsFromGUI.RIGHT);
+                    }
                     break;
                 case ENTER:
                     System.out.println("ENTER");
