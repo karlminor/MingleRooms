@@ -190,8 +190,18 @@ public class ChatRoomView extends HBox {
         for (int y = 0; y < BOARD_Y_TILES; y++) {
             for (int x = 0; x < BOARD_X_TILES; x++) {
                 TextArea currentTile = (TextArea) boardTextAreas.get(x + y * BOARD_X_TILES);
-                currentTile.setBackground(new Background(currentTile.getBackground().getFills(), null));
-                currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
+                if(currentTile != null) {
+                    Background currentBG = currentTile.getBackground();
+                    Background temp = null;
+                    if(currentBG != null) {
+                        temp = new Background(currentBG.getFills(), null);
+                    }
+                    if(temp != null) {
+                        currentTile.setBackground(temp);
+                    }
+                    currentTile.setText(Integer.toString(x + y * BOARD_X_TILES + 1));
+                }
+
             }
         }
     }
@@ -204,7 +214,12 @@ public class ChatRoomView extends HBox {
                 BackgroundImage backgroundImage = new BackgroundImage(avatar, null, null, null, null);
                 ArrayList<BackgroundImage> backgroundImages = new ArrayList<>();
                 backgroundImages.add(backgroundImage);
-                currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
+
+                if(currentTile.getBackground() != null) {
+                    currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
+                } else {
+                    currentTile.setBackground(new Background(backgroundImage));
+                }
             }
             currentTile.setText(nickname);
         }
