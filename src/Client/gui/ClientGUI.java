@@ -3,6 +3,7 @@ package Client.gui;
 import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.CommunicationCallsFromGUIImpl;
+import Client.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

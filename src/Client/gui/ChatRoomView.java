@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -35,12 +34,16 @@ public class ChatRoomView extends HBox {
 
     private ClientGUI clientGUI;
 
+    private volatile User client;
+
+    private Label chatRoomLB;
     private GridPane board;
     private ArrayList<TextArea> boardTextAreas;
     private TextArea chat;
     private TextArea message;
     private ObservableList<String> friendsOnlineList;
     private TextArea chatRoomJoinLeaveHistory;
+    private Button enterChatRoomB;
     private Button send;
 
     private boolean createAvatarImages = true;
@@ -73,6 +76,7 @@ public class ChatRoomView extends HBox {
         HBox innerTopPanel = new HBox();
         innerTopPanel.setAlignment(Pos.CENTER);
         Label friendsLB = new Label("Friends");
+        FontHandler.setTitleFont(friendsLB, 1.3);
         innerTopPanel.getChildren().add(friendsLB);
 
         VBox innerCenterPanel = new VBox();
@@ -113,20 +117,13 @@ public class ChatRoomView extends HBox {
         // Chat room title
         HBox innerTopPanel = new HBox();
         innerTopPanel.setAlignment(Pos.CENTER);
-        Label chatRoomLB = new Label("You are in chat room: ...");
+        chatRoomLB = new Label("You are in chat room: ...");
+        FontHandler.setTitleFont(chatRoomLB, 1.3);
         innerTopPanel.getChildren().add(chatRoomLB);
 
         // Board
         BorderPane innerCenterPanel = new BorderPane();
         board = new GridPane();
-        /*
-        board.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                System.out.println("Mouse caught");
-            }
-        });
-        */
         board.setPadding(new Insets(INSETS, INSETS, INSETS, INSETS));
         board.setGridLinesVisible(true);
         board.setBackground(new Background(new BackgroundFill(Color.rgb(255,255,255, 1), null, null)));
@@ -165,11 +162,11 @@ public class ChatRoomView extends HBox {
         p2pChat.setOnAction(new P2PButtonHandler());
         p2pChat.setPrefWidth(WIDTH * 0.15);
         p2pChat.setPrefHeight(HEIGHT * 0.06);
-        Button enterChatRoom = new Button("Enter chat room: x");
-        enterChatRoom.setOnAction(new EnterChatRoomHandler());
-        enterChatRoom.setPrefHeight(p2pChat.getPrefHeight());
-        enterChatRoom.setPrefWidth(p2pChat.getPrefWidth());
-        innerSidePanel.getChildren().addAll(p2pChat, enterChatRoom);
+        enterChatRoomB = new Button("Enter chat room: x");
+        enterChatRoomB.setOnAction(new EnterChatRoomHandler());
+        enterChatRoomB.setPrefHeight(p2pChat.getPrefHeight());
+        enterChatRoomB.setPrefWidth(p2pChat.getPrefWidth());
+        innerSidePanel.getChildren().addAll(p2pChat, enterChatRoomB);
 
         Region region1 = new Region();
         region1.setPrefWidth(WIDTH * 0.15);
@@ -241,10 +238,8 @@ public class ChatRoomView extends HBox {
                 if(currentTile.getBackground() != null) {
                     currentTile.setBackground(new Background(currentTile.getBackground().getFills(), backgroundImages));
                 } else {
-                    /*
                     System.out.println("Background in draw is null... Creating new");
                     currentTile.setBackground(new Background(backgroundImage));
-                    */
                 }
             } else {
                 System.out.println("Avatar is null");
@@ -268,13 +263,17 @@ public class ChatRoomView extends HBox {
             createAvatarImages = false;
         }
         clearBoard();
-        // TODO check if users are in this chat room
         for(User u : users) {
-            Image avatar = avatarImages.get(u.getAvatarName());
-            if(avatar != null) {
-                drawIconInBoard(u.getX(), u.getY(), avatar, u.getNickname());
-            } else {
-                System.out.println("Problem drawing avatar...");
+            if(u.getChatRoom() == client.getChatRoom()) {
+                Image avatar = avatarImages.get(u.getAvatarName());
+                if(avatar != null) {
+                    drawIconInBoard(u.getX(), u.getY(), avatar, u.getNickname());
+                } else {
+                    System.out.println("Problem drawing avatar...");
+                }
+                if(u == client) {
+                    updateEnterRoomButton();
+                }
             }
         }
     }
@@ -295,10 +294,11 @@ public class ChatRoomView extends HBox {
     }
 
     public void updateFriendsOnline(ArrayList<User> users) {
-        // TODO check if users are in this chat room
         friendsOnlineList.clear();
         for(User u : users) {
-            friendsOnlineList.add(u.getNickname());
+            if(u != client && u.getChatRoom() == client.getChatRoom()) {
+                friendsOnlineList.add(u.getNickname());
+            }
         }
     }
 
@@ -315,6 +315,25 @@ public class ChatRoomView extends HBox {
         for(String s : history) {
             chatRoomJoinLeaveHistory.setText(chatRoomJoinLeaveHistory.getText() + s + "\n");
         }
+    }
+
+    public void changeCurrentRoomTitle(int chatRoom) {
+        if(chatRoom == 0) {
+            chatRoomLB.setText("You are in chat room: Main Room");
+        } else {
+            chatRoomLB.setText("You are in chat room: " + chatRoom);
+        }
+    }
+
+    private void updateEnterRoomButton() {
+        int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
+        enterChatRoomB.setText("Enter chat room: " + selectedChatRoom);
+    }
+
+    public void setClient(User client) {
+        this.client = client;
+        changeCurrentRoomTitle(client.getChatRoom());
+        updateEnterRoomButton();
     }
 
     private class KeyboardHandler implements EventHandler<KeyEvent> {
@@ -427,6 +446,22 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(ActionEvent event) {
+            int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
+
+            /*
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm P2P");
+            alert.setHeaderText("Do you wish to start a p2p-connection with " + otherUserName + "?");
+            alert.setContentText("If you still want to start a p2p-connection, but not with " + otherUserName + ", then select the user you wish to communicate with from the friend list.");
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if(result.isPresent()) {
+
+            boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
+            if(!success) {
+
+            }
+            */
             // TODO
             clientGUI.showPopup(Alert.AlertType.INFORMATION, "Not yet implemented", "Not yet implemented", "...");
         }

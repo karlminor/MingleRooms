@@ -76,6 +76,7 @@ public class FirstView extends VBox{
         HBox titleCenter = new HBox();
         titleCenter.setAlignment(Pos.CENTER);
         Label title = new Label("Mingle Rooms - Client");
+        FontHandler.setTitleFont(title, 1.3);
         titleCenter.getChildren().add(title);
 
         inetAddressTF = new PPTextField("Internet address");
@@ -109,6 +110,7 @@ public class FirstView extends VBox{
         HBox avatarCenter = new HBox();
         avatarCenter.setAlignment(Pos.CENTER);
         Label avatar = new Label("Avatar");
+        FontHandler.setTitleFont(avatar, 1.3);
         avatarCenter.getChildren().add(avatar);
 
         ObservableList<String> avatars = FXCollections.observableArrayList(availableAvatarsNoEnding);

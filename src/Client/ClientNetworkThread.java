@@ -130,8 +130,11 @@ public class ClientNetworkThread extends Thread {
     private void setup() throws IOException{
     	String message = input.readLine();
     	String msg[] = message.split("¤");
+        User client = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
+    	users.add(client);
 
-    	users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
+    	Platform.runLater(() -> {chatRoomView.setClient(client);});
+
     	
     	int length = Integer.parseInt(input.readLine());
     	while(length != 0){
