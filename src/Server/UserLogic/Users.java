@@ -18,7 +18,8 @@ public class Users {
     }
 
     public synchronized void remove(User u){
-        users.remove(u);
+       users.remove(u);
+
     }
 
     public synchronized int size(){

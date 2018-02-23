@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientNetworkThread extends Thread {
@@ -16,6 +17,8 @@ public class ClientNetworkThread extends Thread {
     private volatile ArrayList<User> users; // volatile = thread safe
     private volatile ArrayList<String> chatMessages;
     private BufferedReader input;
+    private Socket socket;
+    private int id;
     
 
     public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
@@ -23,9 +26,10 @@ public class ClientNetworkThread extends Thread {
         this.clientGUI = clientGUI;
         chatMessages = new ArrayList<>();
         users = new ArrayList<>();
+        socket = clientGUI.getCommunicationCallsFromGUI().getSocket();
     	
         try {
-   		 input = new BufferedReader(new InputStreamReader(clientGUI.getCommunicationCallsFromGUI().getSocket().getInputStream()));
+   		 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
    		setup();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -55,8 +59,9 @@ public class ClientNetworkThread extends Thread {
 
     /**
      * Check the Server.UserLogic.Users for all message types and how to differentiate them.
+     * @throws IOException 
      */
-    public void decodeMessage(String message) {
+    public void decodeMessage(String message) throws IOException {
         // TODO
         // e.g. run displayCharactersInGUI() if message received was a character move update
     	String msg[];
@@ -81,6 +86,7 @@ public class ClientNetworkThread extends Thread {
             	msg = message.split("¤");
             	users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
                 updateGUICharacters();
+                updateFriendsOnline();
             	break;
             case ('M'):
             	msg = message.split("¤");
@@ -88,6 +94,14 @@ public class ClientNetworkThread extends Thread {
                 updateGUIChat();
                 break;
             case ('Q'):
+            	for(User u: users){
+            		if(u.getId()==Integer.valueOf(message)){
+            			users.remove(u);
+            	    	updateFriendsOnline();
+            	    	updateGUICharacters();
+            			break;
+            		}
+            	}
                 break;
             default:
                 break;
@@ -130,7 +144,8 @@ public class ClientNetworkThread extends Thread {
     private void setup() throws IOException{
     	String message = input.readLine();
     	String msg[] = message.split("¤");
-        User client = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
+    	id = Integer.valueOf(msg[1]);
+        User client = new User(id, msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
     	users.add(client);
 
     	Platform.runLater(() -> {chatRoomView.setClient(client);});

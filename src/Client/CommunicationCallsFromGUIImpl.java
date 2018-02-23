@@ -36,7 +36,6 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
     	try {
     		output.write("Q\n");
     		output.flush();
-			socket.close();
 			output.close();
 			return true;
 		} catch (IOException e) {
@@ -90,8 +89,13 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
 
     @Override
     public boolean enterChatRoom(int chatRoomNumber) {
-        // TODO
-        return false;
+    	try {
+			output.write("R" + chatRoomNumber + "¤0¤0\n");
+			output.flush();
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
     }
     
     public Socket getSocket() {
