@@ -2,6 +2,7 @@ package Server.UserLogic;
 
 import Server.MessageLogic.Mailbox;
 import Server.MessageLogic.Message;
+import Server.MessageLogic.Postman;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,6 +13,7 @@ public class User extends Thread {
     private BufferedReader input;
     private BufferedWriter output;
     private Mailbox mailbox;
+    private Postman postman;
 
     private String name;
     private String avatar;
@@ -24,10 +26,11 @@ public class User extends Thread {
 
     private boolean settingUp;
 
-    public User(Socket socket, Mailbox mailbox, int id){
+    public User(Socket socket, Mailbox mailbox, Postman postman, int id){
         status = true;
         this.socket = socket;
         this.mailbox = mailbox;
+        this.postman = postman;
         this.id = id;
         name = "User";
         currentRoom = 0;
@@ -128,6 +131,7 @@ public class User extends Thread {
         input.close();
         output.close();
         socket.close();
+        postman.notifyExitAll(this);
     }
 
     public void broadcast(String msg) throws InterruptedException {

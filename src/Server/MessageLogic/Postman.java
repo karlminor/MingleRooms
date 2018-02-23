@@ -22,15 +22,6 @@ public class Postman extends Thread {
 		int id;
 		while (true) {
 			try {
-				
-				for (User u : users.userList()) {
-					if (!u.status()) {
-						users.remove(u);
-						notifyExitAll(u);
-						u.interrupt();
-					}
-				}
-				
 				message = mailbox.withdraw();
 				sender = message.sender;
 				text = message.text;
@@ -46,31 +37,33 @@ public class Postman extends Thread {
 					 * formatted Mid¤text Q = quit
 					 */
 
-					char identifier = text.charAt(0);
-					switch (identifier) {
-					case ('P'):
-						if (sender.sameRoom(u)) {
-							u.echo(text);
+					if (u.status()) {
+						char identifier = text.charAt(0);
+						switch (identifier) {
+						case ('P'):
+							if (sender.sameRoom(u)) {
+								u.echo(text);
+							}
+							break;
+						case ('R'):
+							if (sender.sameRoom(u)) {
+								info = u.getInfo();
+								sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
+							}
+							//u.echo(text);
+							break;
+						case ('M'):
+							if (sender.sameRoom(u)) {
+								u.echo(text);
+							}
+							break;
+						case ('Q'):
+							break;
+						default:
+							break;
 						}
-						break;
-					case ('R'):
-						if (sender.sameRoom(u)) {
-							info = u.getInfo();
-							sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
-						}
-						u.echo(text);
-						break;
-					case ('M'):
-						if (sender.sameRoom(u)) {
-							u.echo(text);
-						}
-						break;
-					case ('Q'):
-						break;
-					default:
-						break;
-					}
 
+					}
 				}
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
@@ -78,7 +71,10 @@ public class Postman extends Thread {
 		}
 	}
 
-	private void notifyExitAll(User u) throws IOException {
+	public void notifyExitAll(User u) throws IOException {
+		users.remove(u);
+		u.interrupt();
+
 		String[] info = u.getInfo();
 		for (User user : users.userList()) {
 			user.echo("Q" + info[0]);

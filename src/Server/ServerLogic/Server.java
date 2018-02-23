@@ -31,7 +31,7 @@ public class Server {
         while(true){
             socket = ss.accept();
 
-            u = new User(socket, mailbox, count);
+            u = new User(socket, mailbox, postman, count);
             u.start();
             users.add(u);
             count++;
