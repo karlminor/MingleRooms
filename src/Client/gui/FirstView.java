@@ -128,7 +128,8 @@ public class FirstView extends VBox{
 
         if(avatarIV != null) {
             avatarIV.setFitWidth(WIDTH * 0.2);
-            avatarIV.setPreserveRatio(true);
+            avatarIV.setFitHeight(WIDTH * 0.2);
+            avatarIV.setPreserveRatio(false);
             avatarIV.setSmooth(true);
             avatarIV.setCache(true);
             innerSideSplitPanel.getChildren().addAll(avatarSelection, avatarIV);
@@ -197,9 +198,9 @@ public class FirstView extends VBox{
                 case ENTER:
                     System.out.println("ENTER");
                     connectB.fire();
+                    event.consume();
                     break;
             }
-            event.consume();
         }
     }
 

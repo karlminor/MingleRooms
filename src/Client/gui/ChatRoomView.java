@@ -36,13 +36,15 @@ public class ChatRoomView extends HBox {
 
     private volatile User client;
 
+    private ListView<String> friendsOnlineLV;
+    private ObservableList<String> friendsOnlineList;
+    private TextArea chatRoomJoinLeaveHistory;
     private Label chatRoomLB;
     private GridPane board;
     private ArrayList<TextArea> boardTextAreas;
     private TextArea chat;
     private TextArea message;
-    private ObservableList<String> friendsOnlineList;
-    private TextArea chatRoomJoinLeaveHistory;
+    private Button p2pChatB;
     private Button enterChatRoomB;
     private Button send;
 
@@ -82,7 +84,7 @@ public class ChatRoomView extends HBox {
         VBox innerCenterPanel = new VBox();
         innerCenterPanel.setSpacing(SPACING);
         friendsOnlineList = FXCollections.observableArrayList();
-        ListView<String> friendsOnlineLV = new ListView<>(friendsOnlineList);
+        friendsOnlineLV = new ListView<>(friendsOnlineList);
         friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
 
         TextArea chatRoomJoinLeaveHistory = new TextArea();
@@ -158,15 +160,16 @@ public class ChatRoomView extends HBox {
         VBox innerSidePanel = new VBox();
         innerSidePanel.setSpacing(SPACING);
         innerSidePanel.setAlignment(Pos.BOTTOM_RIGHT);
-        Button p2pChat = new Button("Start P2P chat");
-        p2pChat.setOnAction(new P2PButtonHandler());
-        p2pChat.setPrefWidth(WIDTH * 0.15);
-        p2pChat.setPrefHeight(HEIGHT * 0.06);
+        p2pChatB = new Button("Start P2P chat");
+        p2pChatB.setDisable(true);
+        p2pChatB.setOnAction(new P2PButtonHandler());
+        p2pChatB.setPrefWidth(WIDTH * 0.15);
+        p2pChatB.setPrefHeight(HEIGHT * 0.06);
         enterChatRoomB = new Button("Enter chat room: x");
         enterChatRoomB.setOnAction(new EnterChatRoomHandler());
-        enterChatRoomB.setPrefHeight(p2pChat.getPrefHeight());
-        enterChatRoomB.setPrefWidth(p2pChat.getPrefWidth());
-        innerSidePanel.getChildren().addAll(p2pChat, enterChatRoomB);
+        enterChatRoomB.setPrefHeight(p2pChatB.getPrefHeight());
+        enterChatRoomB.setPrefWidth(p2pChatB.getPrefWidth());
+        innerSidePanel.getChildren().addAll(p2pChatB, enterChatRoomB);
 
         Region region1 = new Region();
         region1.setPrefWidth(WIDTH * 0.15);
@@ -232,7 +235,7 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    private void drawIconInBoard(int x, int y, Image avatar, String nickname) {
+    private void drawIconInBoard(int x, int y, Image avatar, String nickname, int id) {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
             TextArea currentTile = boardTextAreas.get(x + y * BOARD_X_TILES);
             if(avatar != null) {
@@ -253,12 +256,12 @@ public class ChatRoomView extends HBox {
             Tooltip currentTooltip = currentTile.getTooltip();
             if(currentTooltip != null) {
                 if(!currentTooltip.getText().isEmpty()) {
-                    currentTooltip.setText(currentTooltip.getText() + ",\n" + nickname);
+                    currentTooltip.setText(currentTooltip.getText() + ",\n" + nickname + " (" + id + ")");
                 } else {
-                    currentTooltip.setText(nickname);
+                    currentTooltip.setText(nickname + " (" + id + ")");
                 }
             }
-            currentTile.setText(nickname);
+            currentTile.setText(nickname + " (" + id + ")");
         }
     }
 
@@ -272,7 +275,7 @@ public class ChatRoomView extends HBox {
             if(u.getChatRoom() == client.getChatRoom()) {
                 Image avatar = avatarImages.get(u.getAvatarName());
                 if(avatar != null) {
-                    drawIconInBoard(u.getX(), u.getY(), avatar, u.getNickname());
+                    drawIconInBoard(u.getX(), u.getY(), avatar, u.getNickname(), u.getId());
                 } else {
                     System.out.println("Problem drawing avatar...");
                 }
@@ -306,8 +309,13 @@ public class ChatRoomView extends HBox {
         friendsOnlineList.clear();
         for(User u : users) {
             if(u != client && u.getChatRoom() == client.getChatRoom()) {
-                friendsOnlineList.add(u.getNickname());
+                friendsOnlineList.add(u.getNickname() + " (" + u.getId() + ")");
             }
+        }
+        if(friendsOnlineList.size() > 0) {
+            p2pChatB.setDisable(false);
+        } else {
+            p2pChatB.setDisable(true);
         }
     }
 
@@ -337,7 +345,6 @@ public class ChatRoomView extends HBox {
     private void updateEnterRoomButton() {
         int selectedChatRoom = client.getX() + 1 + client.getY() * BOARD_X_TILES;
         enterChatRoomB.setText("Enter chat room: " + selectedChatRoom);
-        System.out.println("TEXT: Enter chat room: " + selectedChatRoom);
     }
 
     public void setClient(User client) {
@@ -350,7 +357,6 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(KeyEvent event) {
-            // TODO Maybe add some delay so that user can not walk too fast?
             switch (event.getCode()) {
                 case UP:
                     System.out.println("UP");
@@ -431,33 +437,37 @@ public class ChatRoomView extends HBox {
 
         @Override
         public void handle(ActionEvent event) {
-            Stage stage = new Stage();
-            stage.setTitle("Peer-to-peer chat");
+            int selectedIndex = friendsOnlineLV.getSelectionModel().getSelectedIndex();
+            if (selectedIndex > -1) {
+                String selection = friendsOnlineList.get(selectedIndex);
+                String otherUserName = selection.substring(0, selection.lastIndexOf('('));
+                int otherUserID = Integer.parseInt(selection.substring(selection.lastIndexOf('(') + 1, selection.length() - 1));
 
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm P2P");
+                alert.setHeaderText("Do you wish to start a p2p-connection with " + selection + "?");
+                alert.setContentText("If you still want to start a p2p-connection, but not with " + selection + ", then select the user you wish to communicate with from the friend list.");
+                Optional<ButtonType> result = alert.showAndWait();
 
-            String otherUserName = "TEMP";
-            // TODO Get the user that we want to communicate with from the friends list and then get their id
-            int idOtherUser = 0;
+                if (result.isPresent()) {
+                    if (!result.get().getButtonData().isCancelButton()) {
+                        P2PConnection p2pConnection = clientGUI.getCommunicationCallsFromGUI().startP2PChat(otherUserID);
+                        if (p2pConnection != null) {
+                            // TODO Show P2P view
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirm P2P");
-            alert.setHeaderText("Do you wish to start a p2p-connection with " + otherUserName + "?");
-            alert.setContentText("If you still want to start a p2p-connection, but not with " + otherUserName + ", then select the user you wish to communicate with from the friend list.");
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if(result.isPresent()) {
-                if(!result.get().getButtonData().isCancelButton()) {
-                    P2PConnection p2pConnection = clientGUI.getCommunicationCallsFromGUI().startP2PChat(idOtherUser);
-                    if(p2pConnection !=null) {
-                        // TODO Show P2P view
-
+                        }
+                        Stage stage = new Stage();
+                        stage.setTitle("Peer-to-peer chat");
+                        P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
+                        Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
+                        stage.setScene(scene);
+                        stage.show();
                     }
-                    P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
-                    Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
-                    stage.setScene(scene);
-                    stage.show();
-                }
 
+                }
+            } else {
+                // User must select a user to communicate with
+                clientGUI.showPopup(Alert.AlertType.WARNING, "Selection missing", "Please select the user that you wish to start a P2P-connection with.", "Selections are made in the friends list to your left.");
             }
         }
     }
