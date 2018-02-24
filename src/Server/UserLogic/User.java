@@ -49,8 +49,8 @@ public class User extends Thread {
     }
 
     public void run(){
-        System.out.println("User has joined with address: " +
-                socket.getInetAddress());
+        System.out.println("User has joined with socket address: " +
+                socket.getRemoteSocketAddress().toString());
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

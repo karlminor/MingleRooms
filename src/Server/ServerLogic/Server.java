@@ -33,7 +33,6 @@ public class Server {
 
             u = new User(socket, mailbox, postman, count);
             u.start();
-            users.add(u);
             count++;
         }
     }
