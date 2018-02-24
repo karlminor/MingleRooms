@@ -1,5 +1,6 @@
 package Client.gui;
 
+import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.P2PConnection;
 import Client.User;
@@ -411,6 +412,7 @@ public class ChatRoomView extends HBox {
             if(!clientGUI.getCommunicationCallsFromGUI().disconnectFromServer()) {
                 clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to disconnect from server", "...");
             }
+            ClientMain.stopNetworkThread();
             clientGUI.changeView(ClientGUI.FIRST_VIEW);
         }
     }

@@ -14,8 +14,15 @@ public class ClientMain {
         Application.launch(ClientGUI.class);
     }
 
+    private static ClientNetworkThread clientNetworkThread;
+
     // Is started from GUI if connection to server is successful
     public static void startNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
-        new ClientNetworkThread(chatRoomView, clientGUI).start();
+        clientNetworkThread = new ClientNetworkThread(chatRoomView, clientGUI);
+        clientNetworkThread.start();
+    }
+
+    public static void stopNetworkThread() {
+        clientNetworkThread.interrupt();
     }
 }

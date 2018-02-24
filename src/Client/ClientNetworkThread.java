@@ -38,6 +38,7 @@ public class ClientNetworkThread extends Thread {
 
 	public void run() {
 		while (true) {
+			System.out.println("Running... " + getName());
 			String message;
 			try {
 				message = read();
@@ -45,7 +46,12 @@ public class ClientNetworkThread extends Thread {
 			} catch (IOException e) {
 			}
 
+			if(isInterrupted()) {
+				System.out.println(getName() + ": Thread shutting down");
+				return;
+			}
 		}
+
 	}
 
 	/**
