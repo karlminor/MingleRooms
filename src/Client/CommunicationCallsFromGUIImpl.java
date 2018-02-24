@@ -34,9 +34,11 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
     @Override
     public boolean disconnectFromServer() {
     	try {
+    		System.out.println("Leaving");
     		output.write("Q\n");
     		output.flush();
-			output.close();
+    		output.close();
+    		socket.close();
 			return true;
 		} catch (IOException e) {
 			return false;

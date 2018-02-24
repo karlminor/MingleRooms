@@ -44,6 +44,7 @@ public class User extends Thread {
     }
 
     public void setupComplete(){
+        System.out.println("Setting up true");
         settingUp = true;
     }
 
@@ -54,11 +55,11 @@ public class User extends Thread {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             //settingUp is set to true by Users when the connection is established and all information needed has been shared
-            while(!settingUp){
-            }
-            while(socket.isConnected()){
+            while(true){
+
                 handleConnection();
             }
+
 
         } catch (IOException|InterruptedException|NullPointerException e) {
             System.out.println(name + " has left");
@@ -70,9 +71,10 @@ public class User extends Thread {
     public boolean setupConnection() throws IOException {
         String message = null;
         while(message==null) {
-        	try {
-    			message = input.readLine();
-    		} catch (IOException|NullPointerException e) {}
+            try {
+                message = input.readLine();
+                System.out.println(message);
+            } catch (NullPointerException e){}
         }
 		
         if(message.matches(".*¤.*")){
@@ -86,6 +88,7 @@ public class User extends Thread {
 
     private void handleConnection() throws InterruptedException, IOException, NullPointerException {
         String message = input.readLine();
+        System.out.println(message);
         String msg[];
 
         /* Finds the identifier of the message and takes different actions depending on this
@@ -97,7 +100,6 @@ public class User extends Thread {
 
         char identifier = message.charAt(0);
         message = message.substring(1);
-        System.out.println(message);
         switch (identifier) {
             case ('P'):
                 msg = message.split("¤");
@@ -122,11 +124,12 @@ public class User extends Thread {
     }
 
     public void echo(String msg) throws IOException {
+        System.out.println("Skriver " + msg + " till " + name);
         output.write(msg + "\n");
         output.flush();
     }
 
-    private void disconnect() throws IOException {
+    public void disconnect() throws IOException {
         status = false;
         input.close();
         output.close();
