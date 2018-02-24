@@ -4,6 +4,8 @@ import Client.gui.ChatRoomView;
 import Client.gui.ClientGUI;
 import Server.MessageLogic.Message;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,14 +21,18 @@ public class ClientNetworkThread extends Thread {
 	private BufferedReader input;
 	private Socket socket;
 	private int id;
+	private Alert alert;
 
-	public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
+	public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI, Alert alert) {
+		this.alert = alert;
 		this.chatRoomView = chatRoomView;
 		this.clientGUI = clientGUI;
 		chatMessages = new ArrayList<>();
 		users = new ArrayList<>();
 		socket = clientGUI.getCommunicationCallsFromGUI().getSocket();
+	}
 
+	public void run() {
 		try {
 			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			setup();
@@ -34,11 +40,16 @@ public class ClientNetworkThread extends Thread {
 			e.printStackTrace();
 		}
 
-	}
+		// Close GUI alert window
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				alert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL); // Must add cancel button before close can be called for some reason
+				alert.close();
+			}
+		});
 
-	public void run() {
 		while (true) {
-			System.out.println("Running... " + getName());
 			String message;
 			try {
 				message = read();
@@ -47,7 +58,7 @@ public class ClientNetworkThread extends Thread {
 			}
 
 			if(isInterrupted()) {
-				System.out.println(getName() + ": Thread shutting down");
+				// Shutdown thread
 				return;
 			}
 		}
