@@ -4,6 +4,8 @@ import Server.UserLogic.User;
 import Server.UserLogic.Users;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Postman extends Thread {
     Users users;
@@ -19,7 +21,8 @@ public class Postman extends Thread {
         User sender;
         String text;
         String[] info;
-        int id;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime now;
         while (true) {
             try {
                 message = mailbox.withdraw();
@@ -27,6 +30,7 @@ public class Postman extends Thread {
                 e.printStackTrace();
             }
             if (message != null) {
+                now = LocalDateTime.now();
                 sender = message.sender;
                 text = message.text;
                 for (User u : users.userList()) {
@@ -58,7 +62,7 @@ public class Postman extends Thread {
                                     break;
                                 case ('M'):
                                     if (sender.sameRoom(u)) {
-                                        u.echo(text);
+                                        u.echo(dtf.format(now) + " " + text);
                                     }
                                     break;
                                 case ('Q'):

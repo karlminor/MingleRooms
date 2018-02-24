@@ -59,7 +59,8 @@ public class Users {
         } catch (IOException e){
             System.out.println("User set up failed");
             u.interrupt();
-    }
+        }
+        users.add(u);
 
     }
 }
