@@ -63,7 +63,7 @@ public class Postman extends Thread {
                                 case ('M'):
                                     if (sender.sameRoom(u)) {
                                         String actualText = text.substring(1);
-                                        u.echo("M" + dtf.format(now) + " " + actualText);
+                                        u.echo("M" + sender.getInfo()[0] + "¤" + dtf.format(now) + " " + actualText);
                                     }
                                     break;
                                 case ('C'):
