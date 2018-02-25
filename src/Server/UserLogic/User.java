@@ -24,7 +24,6 @@ public class User extends Thread {
 
     private int currentRoom;
 
-    private boolean settingUp;
 
     public User(Socket socket, Mailbox mailbox, Postman postman, int id){
         status = true;
@@ -36,17 +35,12 @@ public class User extends Thread {
         currentRoom = 0;
         x = 0;
         y = 0;
-        settingUp = false;
     }
 
     public boolean status(){
         return status;
     }
 
-    public void setupComplete(){
-        System.out.println("Setting up true");
-        settingUp = true;
-    }
 
     public void run(){
         System.out.println("User has joined with socket address: " +
@@ -137,10 +131,6 @@ public class User extends Thread {
         postman.notifyExitAll(this);
     }
 
-    public void broadcast(String msg) throws InterruptedException {
-        System.out.println("Broadcast " + msg + " from " + name);
-        mailbox.deposit(new Message(this, msg));
-    }
 
     //This function is used only when a user joins a new room
     public void setPosition(int x, int y){
@@ -171,10 +161,6 @@ public class User extends Thread {
 
     public int getRoom(){
         return currentRoom;
-    }
-
-    public int getUserId(){
-        return id;
     }
 
 

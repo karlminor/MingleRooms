@@ -29,10 +29,13 @@ public class Server {
     public void start() throws IOException {
         postman.start();
         while(true){
-            socket = ss.accept();
 
+            //When a client connects first creates the user, then starts the thread, then adds it to the user list.
+            //Upon being added to the user list the server tells the client everything it needs to know to set up the connection
+            socket = ss.accept();
             u = new User(socket, mailbox, postman, count);
             u.start();
+            users.add(u);
             count++;
         }
     }

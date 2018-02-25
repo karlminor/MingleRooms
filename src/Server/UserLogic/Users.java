@@ -14,7 +14,6 @@ public class Users {
 
     public synchronized void add(User u) {
         setupConnection(u);
-        users.add(u);
     }
 
     public synchronized void remove(User u){
@@ -53,7 +52,7 @@ public class Users {
                         }
                     }
                 }
-                u.setupComplete();
+                System.out.println("Client setup complete");
             }
 
         } catch (IOException e){
