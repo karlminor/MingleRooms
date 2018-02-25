@@ -49,16 +49,18 @@ public class Postman extends Thread {
                             char identifier = text.charAt(0);
                             switch (identifier) {
                                 case ('P'):
-                                    if (sender.sameRoom(u)) {
-                                        u.echo(text);
-                                    }
+//                                    if (sender.sameRoom(u)) {
+//                                        u.echo(text);
+//                                    }
+                                	u.echo(text);
                                     break;
                                 case ('R'):
-                                    if (sender.sameRoom(u)) {
-                                        info = u.getInfo();
-                                        sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
-                                    }
-                                    //u.echo(text);
+//                                    if (sender.sameRoom(u)) {
+//                                        info = u.getInfo();
+//                                        sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
+//                                    }
+                                	info = sender.getInfo();
+                                    u.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
                                     break;
                                 case ('M'):
                                     if (sender.sameRoom(u)) {

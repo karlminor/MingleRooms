@@ -14,21 +14,21 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientNetworkThread extends Thread {
-	private ClientGUI clientGUI;
 	private ChatRoomView chatRoomView;
-	private volatile ArrayList<User> users; // volatile = thread safe
+	private volatile ArrayList<User> allUsers; // volatile = thread safe
+	private volatile ArrayList<User> sameRoomUsers;
 	private volatile ArrayList<String> chatMessages;
 	private BufferedReader input;
 	private Socket socket;
-	private int id;
+	private User myUser;
 	private Alert alert;
 
 	public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI, Alert alert) {
 		this.alert = alert;
 		this.chatRoomView = chatRoomView;
-		this.clientGUI = clientGUI;
 		chatMessages = new ArrayList<>();
-		users = new ArrayList<>();
+		allUsers = new ArrayList<>();
+		sameRoomUsers = new ArrayList<>();
 		socket = clientGUI.getCommunicationCallsFromGUI().getSocket();
 	}
 
@@ -44,7 +44,8 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				alert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL); // Must add cancel button before close can be called for some reason
+				alert.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL); // Must add cancel button before close
+																					// can be called for some reason
 				alert.close();
 			}
 		});
@@ -57,7 +58,7 @@ public class ClientNetworkThread extends Thread {
 			} catch (IOException e) {
 			}
 
-			if(isInterrupted()) {
+			if (isInterrupted()) {
 				// Shutdown thread
 				return;
 			}
@@ -88,51 +89,88 @@ public class ClientNetworkThread extends Thread {
 		char identifier = message.charAt(0);
 		message = message.substring(1);
 		System.out.println(identifier + " " + message);
+		User u;
 		switch (identifier) {
 		case ('P'):
 			msg = message.split("¤");
-			for (User u : users) {
-				if (u.getId() == Integer.valueOf(msg[0])) {
-					u.setX(Integer.valueOf(msg[1]));
-					u.setY(Integer.valueOf(msg[2]));
-				}
+			u = findUserWithId(Integer.valueOf(msg[0]));
+
+			if (u != null) {
+				u.setX(Integer.valueOf(msg[1]));
+				u.setY(Integer.valueOf(msg[2]));
+				System.out.println(u.getX() + " " + u.getY() + "!!!!!");
+				updateGUICharacters();
 			}
-			updateGUICharacters();
 			break;
 		case ('R'):
 			msg = message.split("¤");
+			u = findUserWithId(Integer.valueOf(msg[0]));
+			if (u != null) {
+				u.setChatRoom(Integer.valueOf(msg[1]));
+				u.setX(Integer.valueOf(msg[2]));
+				u.setY(Integer.valueOf(msg[3]));
+
+				if (u == myUser) {
+					sameRoomUsers.clear();
+					chatMessages.clear();
+					findSameRoomUsers();
+				} else if (u.getChatRoom() == myUser.getChatRoom()) {
+					sameRoomUsers.add(u);
+				}
+				updateFriendsOnline();
+				updateGUICharacters();
+
+				// if(u.getChatRoom() == myUser.getChatRoom()) {
+				// sameRoomUsers.add(u);
+				// updateFriendsOnline();
+				// updateGUICharacters();
+				// updateGUIChat();
+				// }else {
+				// sameRoomUsers.remove(u);
+				// updateFriendsOnline();
+				// updateGUICharacters();
+				// updateGUIChat();
+				// }
+			}
+
 			break;
 		case ('N'):
 			msg = message.split("¤");
-			users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
-					Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
-			updateGUICharacters();
-			updateFriendsOnline();
+			User newUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
+					Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
+			allUsers.add(newUser);
+			if (myUser.getChatRoom() == newUser.getChatRoom()) {
+				sameRoomUsers.add(newUser);
+				updateGUICharacters();
+				updateFriendsOnline();
+			}
 			break;
 		case ('M'):
 			msg = message.split("¤");
-			chatMessages.add(msg[0] + ": " + msg[1]);
-			updateGUIChat();
+			u = findUserWithId(Integer.valueOf(msg[0]));
+			if (u != null) {
+				chatMessages.add(u.getNickname() + ": " + msg[1]);
+				updateGUIChat();
+			}
 			break;
 		case ('Q'):
-			if (Integer.valueOf(message) == id) {
+			if (Integer.valueOf(message) == myUser.getId()) {
 				socket.close();
 				input.close();
 				this.interrupt();
 			} else {
-				for (User u : users) {
-					if (u.getId() == Integer.valueOf(message)) {
-						users.remove(u);
-						updateFriendsOnline();
-						updateGUICharacters();
-						break;
-					}
+				u = findUserWithId(Integer.valueOf(message));
+				if (u != null) {
+					allUsers.remove(u);
+					updateFriendsOnline();
+					updateGUICharacters();
 				}
 			}
 			break;
 		default:
 			break;
 		}
+
 	}
 
 	/**
@@ -146,7 +184,7 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chatRoomView.displayCharactersInGUI(users);
+				chatRoomView.displayCharactersInGUI(sameRoomUsers);
 			}
 		});
 	}
@@ -155,7 +193,7 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chatRoomView.updateFriendsOnline(users);
+				chatRoomView.updateFriendsOnline(sameRoomUsers);
 			}
 		});
 	}
@@ -172,24 +210,42 @@ public class ClientNetworkThread extends Thread {
 	private void setup() throws IOException {
 		String message = input.readLine();
 		String msg[] = message.split("¤");
-		id = Integer.valueOf(msg[1]);
-		User client = new User(id, msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]),
+		myUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]), Integer.valueOf(msg[5]),
 				Integer.valueOf(msg[6]));
-		users.add(client);
+		allUsers.add(myUser);
 
 		Platform.runLater(() -> {
-			chatRoomView.setClient(client);
+			chatRoomView.setClient(myUser);
 		});
 
 		int length = Integer.parseInt(input.readLine());
 		while (length != 0) {
 			message = input.readLine();
 			msg = message.split("¤");
-			users.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
+			allUsers.add(new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
 					Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
 			length--;
 		}
+		sameRoomUsers.addAll(allUsers);
 		updateFriendsOnline();
 		updateGUICharacters();
+	}
+
+	private User findUserWithId(int id) {
+		for (User u : allUsers) {
+			if (u.getId() == id) {
+				return u;
+			}
+		}
+		return null;
+	}
+	
+	private void findSameRoomUsers() {
+		for (User u: allUsers) {
+			if(u.getChatRoom() == myUser.getChatRoom()) {
+				sameRoomUsers.add(u);
+				System.out.println(u.getX() + " " + u.getY());
+			}
+		}
 	}
 }
