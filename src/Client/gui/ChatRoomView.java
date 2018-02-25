@@ -329,7 +329,7 @@ public class ChatRoomView extends HBox {
                 }
             }
         }
-        displayRoomPopulation(sameRoomUsers);
+        displayRoomPopulation(allUsers);
     }
 
     private void createAvatarImages() {
