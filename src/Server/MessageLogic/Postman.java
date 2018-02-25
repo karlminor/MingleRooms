@@ -62,10 +62,22 @@ public class Postman extends Thread {
                                     break;
                                 case ('M'):
                                     if (sender.sameRoom(u)) {
-                                        u.echo(dtf.format(now) + " " + text);
+                                        String actualText = text.substring(1);
+                                        u.echo("M" + dtf.format(now) + " " + actualText);
                                     }
                                     break;
                                 case ('Q'):
+                                    notifyExitAll(sender);
+                                    break;
+                                case ('C'):
+                                    //if C is the first character then a peer to peer connection has been requested, this will send C¤id¤socketaddress
+                                    // to the user specified by the requested with id being the sender's id
+                                    String[] msg = text.split("¤");
+                                    String senderId = sender.getInfo()[0];
+                                    String receiverID = u.getInfo()[0];
+                                    if(msg[1].equals(receiverID)){
+                                        u.echo("C" + senderId + "¤" + msg[2]);
+                                    }
                                     break;
                                 default:
                                     break;

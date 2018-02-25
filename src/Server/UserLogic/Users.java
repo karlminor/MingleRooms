@@ -21,9 +21,6 @@ public class Users {
 
     }
 
-    public synchronized int size(){
-        return users.size();
-    }
 
     public synchronized List<User> userList(){
         return users;
