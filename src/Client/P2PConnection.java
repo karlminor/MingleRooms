@@ -3,9 +3,9 @@ package Client;
 public interface P2PConnection {
 
     /**
-        Get name of peer
+        Get user object linked to the peer
      **/
-    public String getName();
+    public User getUser();
 
     /**
      Send message to peer

@@ -1,9 +1,9 @@
 package Client;
 
 public class P2PConnectionImpl implements P2PConnection {
+
     @Override
-    public String getName() {
-        // TODO
+    public User getUser() {
         return null;
     }
 
