@@ -307,13 +307,13 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    public void displayCharactersInGUI(ArrayList<User> users) {
+    public void displayCharactersInGUI(ArrayList<User> sameRoomeUsers, ArrayList<User> allUsers) {
         if(createAvatarImages) {
             createAvatarImages();
             createAvatarImages = false;
         }
         clearBoard();
-        for(User u : users) {
+        for(User u : sameRoomeUsers) {
             if(u.getChatRoom() == client.getChatRoom()) {
                 Image avatar = avatarImages.get(u.getAvatarName());
                 if(avatar != null) {
@@ -329,7 +329,7 @@ public class ChatRoomView extends HBox {
                 }
             }
         }
-        displayRoomPopulation(users);
+        displayRoomPopulation(sameRoomeUsers);
     }
 
     private void createAvatarImages() {
@@ -347,9 +347,9 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    public void updateFriendsOnline(ArrayList<User> sameRoomeUsers, ArrayList<User> allUsers) {
+    public void updateFriendsOnline(ArrayList<User> users) {
         friendsOnlineList.clear();
-        for(User u : sameRoomeUsers) {
+        for(User u : users) {
             if(u != client && u.getChatRoom() == client.getChatRoom()) {
                 friendsOnlineList.add(u.getNickname() + " (" + u.getId() + ")");
             }

@@ -176,7 +176,7 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chatRoomView.displayCharactersInGUI(sameRoomUsers);
+				chatRoomView.displayCharactersInGUI(sameRoomUsers, allUsers);
 			}
 		});
 	}
@@ -185,7 +185,7 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chatRoomView.updateFriendsOnline(sameRoomUsers, allUsers);
+				chatRoomView.updateFriendsOnline(sameRoomUsers);
 			}
 		});
 	}
