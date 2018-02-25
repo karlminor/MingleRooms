@@ -85,8 +85,15 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
 
     @Override
     public P2PConnection startP2PChat(int idOtherUser) {
-        // TODO
-        return null;
+    	//TODO
+    	
+    	try {
+			output.write("C" + idOtherUser + "\n");
+			output.flush();
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
     }
 
     @Override
