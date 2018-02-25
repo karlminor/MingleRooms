@@ -163,6 +163,7 @@ public class ClientNetworkThread extends Thread {
 				u = findUserWithId(Integer.valueOf(message));
 				if (u != null) {
 					allUsers.remove(u);
+					sameRoomUsers.remove(u);
 					updateFriendsOnline();
 					updateGUICharacters();
 				}
