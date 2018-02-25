@@ -307,13 +307,13 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    public void displayCharactersInGUI(ArrayList<User> sameRoomeUsers, ArrayList<User> allUsers) {
+    public void displayCharactersInGUI(ArrayList<User> sameRoomUsers, ArrayList<User> allUsers) {
         if(createAvatarImages) {
             createAvatarImages();
             createAvatarImages = false;
         }
         clearBoard();
-        for(User u : sameRoomeUsers) {
+        for(User u : sameRoomUsers) {
             if(u.getChatRoom() == client.getChatRoom()) {
                 Image avatar = avatarImages.get(u.getAvatarName());
                 if(avatar != null) {
@@ -329,7 +329,7 @@ public class ChatRoomView extends HBox {
                 }
             }
         }
-        displayRoomPopulation(sameRoomeUsers);
+        displayRoomPopulation(sameRoomUsers);
     }
 
     private void createAvatarImages() {
