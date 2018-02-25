@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -29,12 +30,13 @@ public class P2PChatView extends HBox {
 
     private TextArea message;
     private Button send;
+    private Button disconnectB;
 
     public P2PChatView(CommunicationCallsFromGUI communicationCallsFromGUI, P2PConnection p2pConnection, Stage stage) {
         this.communicationCallsFromGUI = communicationCallsFromGUI;
         this.p2pConnection = p2pConnection;
         this.stage = stage;
-        stage.setOnCloseRequest(event -> send.fire());
+        stage.setOnCloseRequest(event -> disconnectB.fire());
         containerSettings();
         initComponents();
     }
@@ -48,16 +50,32 @@ public class P2PChatView extends HBox {
     private void initComponents() {
         BorderPane sidePanel = new BorderPane();
         sidePanel.setPrefWidth(WIDTH * 0.2);
-        Label chatInfo = new Label("You are chatting directly with: ");
+        Label chatInfo = new Label("You are chatting directly with: " + p2pConnection.getUser().getNickname());
+        chatInfo.setWrapText(true);
 
-        Button disconnect = new Button("Disconnect");
-        disconnect.setPrefWidth(WIDTH * 0.2);
-        disconnect.setPrefHeight(HEIGHT * 0.15);
-        disconnect.setOnAction(new DisconnectButtonHandler());
+        try {
+            String imagePath = FirstView.AVATAR_FOLDER_PATH_FOR_JAVAFX + p2pConnection.getUser().getAvatarName();
+            ImageView avatarIV = new ImageView(imagePath);
+
+            avatarIV.setFitWidth(WIDTH * 0.10);
+            avatarIV.setFitHeight(WIDTH * 0.10);
+            avatarIV.setPreserveRatio(false);
+            avatarIV.setSmooth(true);
+            avatarIV.setCache(true);
+
+            sidePanel.setCenter(avatarIV);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        disconnectB = new Button("Disconnect");
+        disconnectB.setPrefWidth(WIDTH * 0.2);
+        disconnectB.setPrefHeight(HEIGHT * 0.15);
+        disconnectB.setOnAction(new DisconnectButtonHandler());
 
         sidePanel.setTop(chatInfo);
         BorderPane.setMargin(sidePanel, new Insets(0, 0, INSETS, 0));
-        sidePanel.setBottom(disconnect);
+        sidePanel.setBottom(disconnectB);
 
         VBox centerPanel = new VBox();
         centerPanel.setPrefWidth(WIDTH * 0.8);
@@ -105,10 +123,12 @@ public class P2PChatView extends HBox {
             String text = message.getText();
             if(text != null && !text.isEmpty()) {
                 text = text.replaceAll("¤", "");
-                if(p2pConnection.sendMessage(text)) {
-                    message.setText("");
-                } else {
-                    showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to send message to peer", "...");
+                if(!text.isEmpty()) {
+                    if(p2pConnection.sendMessage(text)) {
+                        message.setText("");
+                    } else {
+                        showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to send message to peer", "...");
+                    }
                 }
             }
         }

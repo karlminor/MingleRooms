@@ -455,17 +455,16 @@ public class ChatRoomView extends HBox {
                     if (!result.get().getButtonData().isCancelButton()) {
                         P2PConnection p2pConnection = clientGUI.getCommunicationCallsFromGUI().startP2PChat(otherUserID);
                         if (p2pConnection != null) {
-                            // TODO Show P2P view
-
+                            Stage stage = new Stage();
+                            stage.setTitle("Peer-to-peer chat");
+                            P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
+                            Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
+                            stage.setScene(scene);
+                            stage.show();
+                        } else {
+                            clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with connection", "No P2P-connection established", "...");
                         }
-                        Stage stage = new Stage();
-                        stage.setTitle("Peer-to-peer chat");
-                        P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
-                        Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
-                        stage.setScene(scene);
-                        stage.show();
                     }
-
                 }
             } else {
                 // User must select a user to communicate with
