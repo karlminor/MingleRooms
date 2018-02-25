@@ -25,7 +25,7 @@ public class ClientMain {
     // Is started from GUI if connection to server is successful
     public static void startNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI) {
         Alert alert = showBlockingAlert();
-        clientNetworkThread = new ClientNetworkThread(chatRoomView, clientGUI, alert);
+        clientNetworkThread = new ClientNetworkThread(chatRoomView, clientGUI.getCommunicationCallsFromGUI().getSocket(), alert);
         clientNetworkThread.start();
     }
 

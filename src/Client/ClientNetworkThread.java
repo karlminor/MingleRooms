@@ -23,13 +23,13 @@ public class ClientNetworkThread extends Thread {
 	private User myUser;
 	private Alert alert;
 
-	public ClientNetworkThread(ChatRoomView chatRoomView, ClientGUI clientGUI, Alert alert) {
+	public ClientNetworkThread(ChatRoomView chatRoomView, Socket socket, Alert alert) {
 		this.alert = alert;
 		this.chatRoomView = chatRoomView;
 		chatMessages = new ArrayList<>();
 		allUsers = new ArrayList<>();
 		sameRoomUsers = new ArrayList<>();
-		socket = clientGUI.getCommunicationCallsFromGUI().getSocket();
+		this.socket = socket;
 	}
 
 	public void run() {
@@ -82,9 +82,6 @@ public class ClientNetworkThread extends Thread {
 	 * @throws IOException
 	 */
 	public void decodeMessage(String message) throws IOException {
-		// TODO
-		// e.g. run displayCharactersInGUI() if message received was a character move
-		// update
 		String msg[];
 		char identifier = message.charAt(0);
 		message = message.substring(1);
@@ -115,23 +112,12 @@ public class ClientNetworkThread extends Thread {
 					findSameRoomUsers();
 				} else if (u.getChatRoom() == myUser.getChatRoom()) {
 					sameRoomUsers.add(u);
-				}else {
+				} else {
 					sameRoomUsers.remove(u);
 				}
 				updateFriendsOnline();
 				updateGUICharacters();
-
-				// if(u.getChatRoom() == myUser.getChatRoom()) {
-				// sameRoomUsers.add(u);
-				// updateFriendsOnline();
-				// updateGUICharacters();
-				// updateGUIChat();
-				// }else {
-				// sameRoomUsers.remove(u);
-				// updateFriendsOnline();
-				// updateGUICharacters();
-				// updateGUIChat();
-				// }
+				updateGUIChat();
 			}
 
 			break;
@@ -168,6 +154,10 @@ public class ClientNetworkThread extends Thread {
 					updateGUICharacters();
 				}
 			}
+			break;
+		case ('C'):
+			msg = message.split("¤");
+			// Peer-to-peer
 			break;
 		default:
 			break;
@@ -241,10 +231,10 @@ public class ClientNetworkThread extends Thread {
 		}
 		return null;
 	}
-	
+
 	private void findSameRoomUsers() {
-		for (User u: allUsers) {
-			if(u.getChatRoom() == myUser.getChatRoom()) {
+		for (User u : allUsers) {
+			if (u.getChatRoom() == myUser.getChatRoom()) {
 				sameRoomUsers.add(u);
 			}
 		}
