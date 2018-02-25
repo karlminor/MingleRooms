@@ -185,7 +185,7 @@ public class ClientNetworkThread extends Thread {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				chatRoomView.updateFriendsOnline(sameRoomUsers);
+				chatRoomView.updateFriendsOnline(sameRoomUsers, allUsers);
 			}
 		});
 	}

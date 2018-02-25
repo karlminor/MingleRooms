@@ -347,9 +347,9 @@ public class ChatRoomView extends HBox {
         }
     }
 
-    public void updateFriendsOnline(ArrayList<User> users) {
+    public void updateFriendsOnline(ArrayList<User> sameRoomeUsers, ArrayList<User> allUsers) {
         friendsOnlineList.clear();
-        for(User u : users) {
+        for(User u : sameRoomeUsers) {
             if(u != client && u.getChatRoom() == client.getChatRoom()) {
                 friendsOnlineList.add(u.getNickname() + " (" + u.getId() + ")");
             }
