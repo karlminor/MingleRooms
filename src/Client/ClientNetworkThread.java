@@ -218,7 +218,7 @@ public class ClientNetworkThread extends Thread {
 					Integer.valueOf(msg[5]), Integer.valueOf(msg[6])));
 			length--;
 		}
-		sameRoomUsers.addAll(allUsers);
+		findSameRoomUsers();
 		updateFriendsOnline();
 		updateGUICharacters();
 	}
