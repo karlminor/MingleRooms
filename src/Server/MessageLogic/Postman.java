@@ -66,9 +66,6 @@ public class Postman extends Thread {
                                         u.echo("M" + dtf.format(now) + " " + actualText);
                                     }
                                     break;
-                                case ('Q'):
-                                    notifyExitAll(sender);
-                                    break;
                                 case ('C'):
                                     //if C is the first character then a peer to peer connection has been requested, this will send C¤id¤socketaddress
                                     // to the user specified by the requested with id being the sender's id
@@ -101,5 +98,6 @@ public class Postman extends Thread {
         for (User user : users.userList()) {
             user.echo("Q" + info[0]);
         }
+
     }
 }

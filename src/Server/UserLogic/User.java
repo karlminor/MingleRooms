@@ -113,7 +113,6 @@ public class User extends Thread {
                     mailbox.deposit(new Message(this, "M" + name + "¤" + message));
                     break;
                 case ('Q'):
-                    mailbox.deposit(new Message(this, "Q"));
                     disconnect();
                     break;
                 case ('C'):
@@ -139,7 +138,7 @@ public class User extends Thread {
         input.close();
         output.close();
         socket.close();
-        //postman.notifyExitAll(this);
+        postman.notifyExitAll(this);
     }
 
 
