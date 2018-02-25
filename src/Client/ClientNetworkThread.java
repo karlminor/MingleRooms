@@ -98,7 +98,6 @@ public class ClientNetworkThread extends Thread {
 			if (u != null) {
 				u.setX(Integer.valueOf(msg[1]));
 				u.setY(Integer.valueOf(msg[2]));
-				System.out.println(u.getX() + " " + u.getY() + "!!!!!");
 				updateGUICharacters();
 			}
 			break;
@@ -116,6 +115,8 @@ public class ClientNetworkThread extends Thread {
 					findSameRoomUsers();
 				} else if (u.getChatRoom() == myUser.getChatRoom()) {
 					sameRoomUsers.add(u);
+				}else {
+					sameRoomUsers.remove(u);
 				}
 				updateFriendsOnline();
 				updateGUICharacters();
@@ -244,7 +245,6 @@ public class ClientNetworkThread extends Thread {
 		for (User u: allUsers) {
 			if(u.getChatRoom() == myUser.getChatRoom()) {
 				sameRoomUsers.add(u);
-				System.out.println(u.getX() + " " + u.getY());
 			}
 		}
 	}
