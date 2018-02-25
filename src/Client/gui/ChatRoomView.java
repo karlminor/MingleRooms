@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class ChatRoomView extends HBox {
@@ -236,6 +237,46 @@ public class ChatRoomView extends HBox {
         }
     }
 
+    private void displayRoomPopulation(ArrayList<User> users) {
+        if(client.getChatRoom() == 0) {
+            // TODO Do we need to use a map instead to save memory?
+            int[] population = new int[BOARD_X_TILES * BOARD_Y_TILES];
+            for(User u : users) {
+                if(u.getChatRoom() != 0) {
+                    population[u.getChatRoom() - 1]++;
+                }
+            }
+
+            for(int i = 0; i < population.length; i++) {
+                int p = population[i];
+                //System.out.println("Population " + p + " in room " + (i + 1));
+                if(p != 0) {
+                    TextArea currentTile = boardTextAreas.get(i);
+                    if(currentTile != null) {
+                        String currentText = currentTile.getText();
+                        if(!currentText.isEmpty()) {
+                            currentTile.setText(currentText + "\n("+ p + " u)");
+                        }
+                        Tooltip currentTooltip = currentTile.getTooltip();
+                        if(currentTooltip != null) {
+                            //System.out.println("Tooltip not null in room " + (i + 1));
+                            String currentTooltipText = currentTooltip.getText();
+                            if(!currentTooltipText.isEmpty()) {
+                                //System.out.println("Tooltip text not empty in room " + (i + 1));
+                                currentTooltip.setText(currentTooltipText + "\n("+ p + " u)");
+                            } else {
+                                //System.out.println("Tooltip text empty in room " + (i + 1));
+                                currentTooltip.setText("("+ p + " u)");
+                            }
+                        } else {
+                            //System.out.println("Tooltip null in room " + (i + 1));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void drawIconInBoard(int x, int y, Image avatar, String nickname, int id) {
         if(x >= 0 && x < BOARD_X_TILES && y >= 0 && y < BOARD_Y_TILES) {
             TextArea currentTile = boardTextAreas.get(x + y * BOARD_X_TILES);
@@ -288,7 +329,7 @@ public class ChatRoomView extends HBox {
                 }
             }
         }
-
+        displayRoomPopulation(users);
     }
 
     private void createAvatarImages() {
