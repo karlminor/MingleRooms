@@ -1,8 +1,6 @@
 package Client.gui;
 
 import java.util.ArrayList;
-
-import Client.CommunicationCallsFromGUI;
 import Client.P2PConnection;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,7 +23,6 @@ public class P2PChatView extends HBox {
     private final int INSETS = 10;
     private final int SPACING = 10;
 
-    private CommunicationCallsFromGUI communicationCallsFromGUI;
     private P2PConnection p2pConnection;
 
     private Stage stage;
@@ -35,8 +32,7 @@ public class P2PChatView extends HBox {
     private Button send;
     private Button disconnectB;
 
-    public P2PChatView(CommunicationCallsFromGUI communicationCallsFromGUI, P2PConnection p2pConnection, Stage stage) {
-        this.communicationCallsFromGUI = communicationCallsFromGUI;
+    public P2PChatView(P2PConnection p2pConnection, Stage stage) {
         this.p2pConnection = p2pConnection;
         this.stage = stage;
         stage.setOnCloseRequest(event -> disconnectB.fire());

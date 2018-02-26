@@ -2,7 +2,6 @@ package Client.gui;
 
 import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
-import Client.P2PConnection;
 import Client.P2PConnectionImpl;
 import Client.User;
 import javafx.collections.FXCollections;
@@ -21,10 +20,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class ChatRoomView extends HBox {
@@ -400,7 +397,7 @@ public class ChatRoomView extends HBox {
         if (p2pConnection != null) {
             Stage stage = new Stage();
             stage.setTitle("Peer-to-peer chat");
-            P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
+            P2PChatView root = new P2PChatView(p2pConnection, stage);
             Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
             stage.setScene(scene);
             stage.show();

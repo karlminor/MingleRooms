@@ -1,16 +1,12 @@
 package Client;
 
 import Client.gui.ChatRoomView;
-import Client.gui.ClientGUI;
-import Server.MessageLogic.Message;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -162,6 +158,7 @@ public class ClientNetworkThread extends Thread {
 			if(Integer.valueOf(msg[0]) == myUser.getId()) {
 				ServerSocket ss = CommunicationCallsFromGUIImpl.getSS();
 				p2pSocket = ss.accept();
+				ss.close();
 				u = findUserWithId(Integer.valueOf(msg[1]));
 			}else {
 				p2pSocket = new Socket(msg[1].substring(1), Integer.valueOf(msg[2]));

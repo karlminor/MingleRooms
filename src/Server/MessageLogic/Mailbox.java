@@ -1,7 +1,5 @@
 package Server.MessageLogic;
 
-import Server.UserLogic.User;
-
 public class Mailbox {
     private Message message;
     private boolean full;

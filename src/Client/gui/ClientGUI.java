@@ -3,7 +3,6 @@ package Client.gui;
 import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.CommunicationCallsFromGUIImpl;
-import Client.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -77,7 +76,7 @@ public class ClientGUI extends Application {
 
     public CommunicationCallsFromGUI getCommunicationCallsFromGUI() {
         if(communicationCallsFromGUI == null) {
-            communicationCallsFromGUI = new CommunicationCallsFromGUIImpl(chatRoomView);
+            communicationCallsFromGUI = new CommunicationCallsFromGUIImpl();
         }
         return communicationCallsFromGUI;
     }
