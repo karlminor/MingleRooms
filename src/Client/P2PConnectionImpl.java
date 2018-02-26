@@ -14,7 +14,8 @@ import Client.gui.P2PChatView;
 import javafx.application.Platform;
 
 public class P2PConnectionImpl implements P2PConnection {
-	private User user;
+	private User otherUser;
+	private User myUser;
 	private Socket socket;
 	private BufferedWriter output;
 	private BufferedReader input;
@@ -22,8 +23,9 @@ public class P2PConnectionImpl implements P2PConnection {
 	private ArrayList<String> messages;
 	private messageReader msgr;
 
-	public P2PConnectionImpl(User user, Socket socket) throws IOException {
-		this.user = user;
+	public P2PConnectionImpl(User otherUser, User myUser, Socket socket) throws IOException {
+		this.myUser = myUser;
+		this.otherUser = otherUser;
 		this.socket = socket;
 		output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 		input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -35,14 +37,14 @@ public class P2PConnectionImpl implements P2PConnection {
 
 	@Override
 	public User getUser() {
-		return user;
+		return otherUser;
 	}
 
 	@Override
 	public boolean sendMessage(String message) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     	try {
-    		String msg = user.getNickname() + ": " + dtf.format(LocalDateTime.now()) + " " + message;
+    		String msg = myUser.getNickname() + ": " + dtf.format(LocalDateTime.now()) + " " + message;
     		messages.add(msg);
 			output.write("M" + msg + "\n");
 			output.flush();

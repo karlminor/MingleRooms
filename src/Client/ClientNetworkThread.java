@@ -166,7 +166,7 @@ public class ClientNetworkThread extends Thread {
 			}
 			
 			if(u!= null) {
-				startP2PConnection(new P2PConnectionImpl(u, p2pSocket));
+				startP2PConnection(new P2PConnectionImpl(u, myUser, p2pSocket));
 			}
 			break;
 		default:
