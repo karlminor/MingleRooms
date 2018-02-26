@@ -237,7 +237,6 @@ public class ChatRoomView extends HBox {
 
     private void displayRoomPopulation(ArrayList<User> users) {
         if(client.getChatRoom() == 0) {
-            // TODO Do we need to use a map instead to save memory?
             int[] population = new int[BOARD_X_TILES * BOARD_Y_TILES];
             for(User u : users) {
                 if(u.getChatRoom() != 0) {
@@ -533,7 +532,7 @@ public class ChatRoomView extends HBox {
                 if(result.isPresent()) {
                     if(!result.get().getButtonData().isCancelButton()) {
                         boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
-                        clearBoard(); // TODO Is there a risk that this will hide the character?
+                        clearBoard();
                         if(success) {
                             enterChatRoomB.setText("Leave chat room: " + selectedChatRoom);
                         } else {
@@ -543,7 +542,6 @@ public class ChatRoomView extends HBox {
                 }
             } else {
                 // Client is not inside main room -> Leave chat room and join main room
-                // TODO dialog before leaving room
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirm chat room change");
                 alert.setHeaderText("Are you sure that you want to leave your current room and enter the main chat room?");
