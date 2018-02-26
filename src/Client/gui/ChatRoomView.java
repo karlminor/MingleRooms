@@ -326,6 +326,7 @@ public class ChatRoomView extends HBox {
                 }
             }
         }
+        changeCurrentRoomTitle(client.getChatRoom());
         displayRoomPopulation(allUsers);
     }
 
