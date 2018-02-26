@@ -3,6 +3,7 @@ package Client.gui;
 import Client.ClientMain;
 import Client.CommunicationCallsFromGUI;
 import Client.P2PConnection;
+import Client.P2PConnectionImpl;
 import Client.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -395,15 +396,15 @@ public class ChatRoomView extends HBox {
         updateEnterRoomButton();
     }
     
-    public void startP2PConnection (P2PConnection p2pConnection) {
+    public void startP2PConnection (P2PConnectionImpl p2pConnection) {
         if (p2pConnection != null) {
-        	System.out.println("hejhej");
             Stage stage = new Stage();
             stage.setTitle("Peer-to-peer chat");
             P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
             Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
             stage.setScene(scene);
             stage.show();
+            p2pConnection.setP2PChatView(root);
         } else {
             clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with connection", "No P2P-connection established", "...");
         }

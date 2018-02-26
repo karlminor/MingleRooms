@@ -1,5 +1,7 @@
 package Client.gui;
 
+import java.util.ArrayList;
+
 import Client.CommunicationCallsFromGUI;
 import Client.P2PConnection;
 import javafx.event.ActionEvent;
@@ -29,6 +31,7 @@ public class P2PChatView extends HBox {
     private Stage stage;
 
     private TextArea message;
+    private TextArea chat;
     private Button send;
     private Button disconnectB;
 
@@ -81,7 +84,7 @@ public class P2PChatView extends HBox {
         centerPanel.setPrefWidth(WIDTH * 0.8);
         centerPanel.setPrefHeight(HEIGHT * 0.60);
         centerPanel.setSpacing(SPACING);
-        TextArea chat = new TextArea();
+        chat = new TextArea();
         chat.setOnKeyPressed(new MessageKeyboardHandler());
         chat.setPrefHeight(HEIGHT * 0.50);
         chat.setWrapText(true);
@@ -114,6 +117,19 @@ public class P2PChatView extends HBox {
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
         alert.showAndWait();
+    }
+    
+    public void close() {
+    	showPopup(Alert.AlertType.WARNING, "Issues with connection", "Peer disconnected", "...");
+    	stage.close();
+    }
+    
+    public void updateChat(ArrayList<String> messages) {
+        chat.clear();
+        for(String s : messages) {
+            chat.setText(chat.getText() + s + "\n");
+        }
+        chat.setScrollTop(Double.MAX_VALUE);
     }
 
     private class SendMessageButtonHandler implements EventHandler<ActionEvent> {

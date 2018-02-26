@@ -58,7 +58,6 @@ public class ClientNetworkThread extends Thread {
 				message = read();
 				decodeMessage(message);
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 
 			if (isInterrupted()) {
@@ -88,7 +87,6 @@ public class ClientNetworkThread extends Thread {
 		String msg[];
 		char identifier = message.charAt(0);
 		message = message.substring(1);
-		System.out.println(identifier + " " + message);
 		User u;
 		switch (identifier) {
 		case ('P'):
@@ -180,7 +178,7 @@ public class ClientNetworkThread extends Thread {
 
 	}
 	
-	public void startP2PConnection(P2PConnection p2p) {
+	public void startP2PConnection(P2PConnectionImpl p2p) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
