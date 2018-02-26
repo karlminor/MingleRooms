@@ -116,7 +116,7 @@ public class User extends Thread {
                     disconnect();
                     break;
                 case ('C'):
-                    mailbox.deposit(new Message(this, "C" + "¤" + message + "¤" + socket.getRemoteSocketAddress().toString()));
+                    mailbox.deposit(new Message(this, "C" + message));
                     break;
                 default:
                     break;
@@ -171,6 +171,10 @@ public class User extends Thread {
 
     public int getRoom() {
         return currentRoom;
+    }
+    
+    public String getLocalAddress() {
+    	return socket.getLocalAddress().toString();
     }
 
 }

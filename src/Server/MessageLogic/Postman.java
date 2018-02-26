@@ -49,16 +49,9 @@ public class Postman extends Thread {
                             char identifier = text.charAt(0);
                             switch (identifier) {
                                 case ('P'):
-//                                    if (sender.sameRoom(u)) {
-//                                        u.echo(text);
-//                                    }
                                 	u.echo(text);
                                     break;
                                 case ('R'):
-//                                    if (sender.sameRoom(u)) {
-//                                        info = u.getInfo();
-//                                        sender.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
-//                                    }
                                 	info = sender.getInfo();
                                     u.echo("R" + info[0] + "¤" + info[3] + "¤" + info[4] + "¤" + info[5]);
                                     break;
@@ -71,11 +64,13 @@ public class Postman extends Thread {
                                 case ('C'):
                                     //if C is the first character then a peer to peer connection has been requested, this will send C¤id¤socketaddress
                                     // to the user specified by the requested with id being the sender's id
-                                    String[] msg = text.split("¤");
                                     String senderId = sender.getInfo()[0];
                                     String receiverID = u.getInfo()[0];
-                                    if(msg[1].equals(receiverID)){
-                                        u.echo("C" + senderId + "¤" + msg[2]);
+                                    info = text.substring(1).split("¤");
+                                    
+                                    if(info[0].equals(receiverID)){
+                                        u.echo("C" + senderId + "¤" + sender.getLocalAddress() + "¤" + info[1]);
+                                        sender.echo("C" + senderId + "¤" + receiverID);
                                     }
                                     break;
                                 default:

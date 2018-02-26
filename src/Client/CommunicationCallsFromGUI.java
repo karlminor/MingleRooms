@@ -25,7 +25,7 @@ public interface CommunicationCallsFromGUI {
     public void move(int direction);
 
     // TODO Not supported in GUI yet
-    public P2PConnection startP2PChat(int idOtherUser);
+    public boolean startP2PChat(int idOtherUser);
 
     // TODO Not supported in GUI yet
     public boolean enterChatRoom(int chatRoomNumber);

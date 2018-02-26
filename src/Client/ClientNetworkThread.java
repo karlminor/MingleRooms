@@ -10,6 +10,8 @@ import javafx.scene.control.ButtonType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -56,6 +58,7 @@ public class ClientNetworkThread extends Thread {
 				message = read();
 				decodeMessage(message);
 			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
 			if (isInterrupted()) {
@@ -157,12 +160,33 @@ public class ClientNetworkThread extends Thread {
 			break;
 		case ('C'):
 			msg = message.split("¤");
-			// Peer-to-peer
+			Socket p2pSocket;
+			if(Integer.valueOf(msg[0]) == myUser.getId()) {
+				ServerSocket ss = CommunicationCallsFromGUIImpl.getSS();
+				p2pSocket = ss.accept();
+				u = findUserWithId(Integer.valueOf(msg[1]));
+			}else {
+				p2pSocket = new Socket(msg[1].substring(1), Integer.valueOf(msg[2]));
+				u = findUserWithId(Integer.valueOf(msg[0]));
+			}
+			
+			if(u!= null) {
+				startP2PConnection(new P2PConnectionImpl(u, p2pSocket));
+			}
 			break;
 		default:
 			break;
 		}
 
+	}
+	
+	public void startP2PConnection(P2PConnection p2p) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				chatRoomView.startP2PConnection(p2p);
+			}
+		});
 	}
 
 	/**

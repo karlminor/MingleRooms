@@ -5,12 +5,14 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI {
     private ChatRoomView chatRoomView;
     private Socket socket;
     private BufferedWriter output;
+    public static ServerSocket ss;
 
     // See the interface CommunicationCallsFromGUI for descriptions/notes
 
@@ -84,15 +86,14 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
     }
 
     @Override
-    public P2PConnection startP2PChat(int idOtherUser) {
-    	//TODO
-    	
+    public boolean startP2PChat(int idOtherUser) {
     	try {
-			output.write("C" + idOtherUser + "\n");
+    	   	ss = new ServerSocket(0);
+			output.write("C" + idOtherUser + "¤" + ss.getLocalPort() + "\n");
 			output.flush();
-			return null;
+			return true;
 		} catch (IOException e) {
-			return null;
+			return false;
 		}
     }
 
@@ -109,5 +110,9 @@ public class CommunicationCallsFromGUIImpl implements CommunicationCallsFromGUI 
     
     public Socket getSocket() {
     	return socket;
+    }
+    
+    public static ServerSocket getSS() {
+    	return ss;
     }
 }

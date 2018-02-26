@@ -394,6 +394,20 @@ public class ChatRoomView extends HBox {
         changeCurrentRoomTitle(client.getChatRoom());
         updateEnterRoomButton();
     }
+    
+    public void startP2PConnection (P2PConnection p2pConnection) {
+        if (p2pConnection != null) {
+        	System.out.println("hejhej");
+            Stage stage = new Stage();
+            stage.setTitle("Peer-to-peer chat");
+            P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
+            Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
+            stage.setScene(scene);
+            stage.show();
+        } else {
+            clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with connection", "No P2P-connection established", "...");
+        }
+    }
 
     private class KeyboardHandler implements EventHandler<KeyEvent> {
 
@@ -494,16 +508,8 @@ public class ChatRoomView extends HBox {
 
                 if (result.isPresent()) {
                     if (!result.get().getButtonData().isCancelButton()) {
-                        P2PConnection p2pConnection = clientGUI.getCommunicationCallsFromGUI().startP2PChat(otherUserID);
-                        if (p2pConnection != null) {
-                            Stage stage = new Stage();
-                            stage.setTitle("Peer-to-peer chat");
-                            P2PChatView root = new P2PChatView(clientGUI.getCommunicationCallsFromGUI(), p2pConnection, stage);
-                            Scene scene = new Scene(root, P2PChatView.WIDTH, P2PChatView.HEIGHT);
-                            stage.setScene(scene);
-                            stage.show();
-                        } else {
-                            clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with connection", "No P2P-connection established", "...");
+                        if(!clientGUI.getCommunicationCallsFromGUI().startP2PChat(otherUserID)) {
+                        	clientGUI.showPopup(Alert.AlertType.WARNING, "Issue with connection", "No P2P-connection established", "...");
                         }
                     }
                 }
