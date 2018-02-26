@@ -16,6 +16,7 @@ public class ClientNetworkThread extends Thread {
 	private volatile ArrayList<User> allUsers; // volatile = thread safe
 	private volatile ArrayList<User> sameRoomUsers;
 	private volatile ArrayList<String> chatMessages;
+	private volatile ArrayList<String> history;
 	private BufferedReader input;
 	private Socket socket;
 	private User myUser;
@@ -27,6 +28,7 @@ public class ClientNetworkThread extends Thread {
 		chatMessages = new ArrayList<>();
 		allUsers = new ArrayList<>();
 		sameRoomUsers = new ArrayList<>();
+		history = new ArrayList<>();
 		this.socket = socket;
 	}
 
@@ -99,6 +101,7 @@ public class ClientNetworkThread extends Thread {
 			msg = message.split("¤");
 			u = findUserWithId(Integer.valueOf(msg[0]));
 			if (u != null) {
+				int room = u.getChatRoom();
 				u.setChatRoom(Integer.valueOf(msg[1]));
 				u.setX(Integer.valueOf(msg[2]));
 				u.setY(Integer.valueOf(msg[3]));
@@ -109,12 +112,24 @@ public class ClientNetworkThread extends Thread {
 					findSameRoomUsers();
 				} else if (u.getChatRoom() == myUser.getChatRoom()) {
 					sameRoomUsers.add(u);
+					if (room == 0) {
+						history.add(u.getNickname() + " has joined room " + u.getChatRoom());
+					} else {
+						history.add(u.getNickname() + " has left room " + room);
+					}
 				} else {
 					sameRoomUsers.remove(u);
+					if (room == 0) {
+						history.add(u.getNickname() + " has joined room " + u.getChatRoom());
+					} else {
+						history.add(u.getNickname() + " has left room " + room);
+					}
 				}
+
 				updateFriendsOnline();
 				updateGUICharacters();
 				updateGUIChat();
+				updateHistory();
 			}
 
 			break;
@@ -123,11 +138,13 @@ public class ClientNetworkThread extends Thread {
 			User newUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
 					Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
 			allUsers.add(newUser);
+			history.add(newUser.getNickname() + " has joined Main Room");
 			if (myUser.getChatRoom() == newUser.getChatRoom()) {
 				sameRoomUsers.add(newUser);
 				updateGUICharacters();
 				updateFriendsOnline();
 			}
+			updateHistory();
 			break;
 		case ('M'):
 			msg = message.split("¤");
@@ -147,25 +164,27 @@ public class ClientNetworkThread extends Thread {
 				if (u != null) {
 					allUsers.remove(u);
 					sameRoomUsers.remove(u);
+					history.add(u.getNickname() + " has left");
 					updateFriendsOnline();
 					updateGUICharacters();
+					updateHistory();
 				}
 			}
 			break;
 		case ('C'):
 			msg = message.split("¤");
 			Socket p2pSocket;
-			if(Integer.valueOf(msg[0]) == myUser.getId()) {
+			if (Integer.valueOf(msg[0]) == myUser.getId()) {
 				ServerSocket ss = CommunicationCallsFromGUIImpl.getSS();
 				p2pSocket = ss.accept();
 				ss.close();
 				u = findUserWithId(Integer.valueOf(msg[1]));
-			}else {
+			} else {
 				p2pSocket = new Socket(msg[1].substring(1), Integer.valueOf(msg[2]));
 				u = findUserWithId(Integer.valueOf(msg[0]));
 			}
-			
-			if(u!= null) {
+
+			if (u != null) {
 				startP2PConnection(new P2PConnectionImpl(u, myUser, p2pSocket));
 			}
 			break;
@@ -174,7 +193,7 @@ public class ClientNetworkThread extends Thread {
 		}
 
 	}
-	
+
 	public void startP2PConnection(P2PConnectionImpl p2p) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -214,6 +233,15 @@ public class ClientNetworkThread extends Thread {
 			@Override
 			public void run() {
 				chatRoomView.updateChat(chatMessages);
+			}
+		});
+	}
+
+	public void updateHistory() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				chatRoomView.updateChatRoomJoinLeaveHistory(history);
 			}
 		});
 	}

@@ -52,7 +52,7 @@ public class Users {
                 System.out.println("Client setup complete");
             }
 
-        } catch (IOException e){
+        } catch (IOException|NullPointerException e){
             System.out.println("User set up failed");
             u.interrupt();
         }

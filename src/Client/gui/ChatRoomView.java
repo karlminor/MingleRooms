@@ -87,7 +87,7 @@ public class ChatRoomView extends HBox {
         friendsOnlineLV = new ListView<>(friendsOnlineList);
         friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
 
-        TextArea chatRoomJoinLeaveHistory = new TextArea();
+        chatRoomJoinLeaveHistory = new TextArea();
         chatRoomJoinLeaveHistory.setEditable(false);
         chatRoomJoinLeaveHistory.setPrefHeight(HEIGHT * 0.51);
         chatRoomJoinLeaveHistory.setOnKeyPressed(new KeyboardHandler());
@@ -465,6 +465,9 @@ public class ChatRoomView extends HBox {
             if(!clientGUI.getCommunicationCallsFromGUI().disconnectFromServer()) {
                 clientGUI.showPopup(Alert.AlertType.WARNING, "Issues with connection", "Failed to disconnect from server", "...");
             }
+            chat.clear();
+            chatRoomJoinLeaveHistory.clear();
+            friendsOnlineList.clear();
             ClientMain.stopNetworkThread();
             clientGUI.changeView(ClientGUI.FIRST_VIEW);
         }

@@ -127,7 +127,7 @@ public class User extends Thread {
 
     }
 
-    public void echo(String msg) throws IOException {
+    public void echo(String msg) throws IOException, NullPointerException {
         System.out.println("Skriver " + msg + " till " + name);
         output.write(msg + "\n");
         output.flush();
