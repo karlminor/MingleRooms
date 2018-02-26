@@ -535,7 +535,7 @@ public class ChatRoomView extends HBox {
                         boolean success = clientGUI.getCommunicationCallsFromGUI().enterChatRoom(selectedChatRoom);
                         clearBoard(); // TODO Is there a risk that this will hide the character?
                         if(success) {
-                            enterChatRoomB.setText("Leave chat room " + selectedChatRoom);
+                            enterChatRoomB.setText("Leave chat room: " + selectedChatRoom);
                         } else {
                             clientGUI.showPopup(Alert.AlertType.INFORMATION, "Issues with connection", "Failed to enter chat room", "...");
                         }
