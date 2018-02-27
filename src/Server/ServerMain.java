@@ -12,7 +12,6 @@ public class ServerMain {
 
     public void run(){
         try {
-            System.out.println("Starting server with port: 30000");
             Server server = new Server(30000);
             server.start();
         } catch (IOException e) {
