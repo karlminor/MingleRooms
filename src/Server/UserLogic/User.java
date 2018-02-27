@@ -122,7 +122,7 @@ public class User extends Thread {
                     break;
             }
         } catch (StringIndexOutOfBoundsException e) {
-            //Inte säker på varför det går kasst här
+
         }
 
     }
