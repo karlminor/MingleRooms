@@ -49,7 +49,7 @@ public class P2PChatView extends HBox {
     private void initComponents() {
         BorderPane sidePanel = new BorderPane();
         sidePanel.setPrefWidth(WIDTH * 0.2);
-        Label chatInfo = new Label("You are chatting directly with: " + p2pConnection.getUser().getNickname());
+        Label chatInfo = new Label("You are chatting directly with: " + p2pConnection.getUser().getNickname() + " (" + p2pConnection.getUser().getId() + ")");
         chatInfo.setWrapText(true);
 
         try {

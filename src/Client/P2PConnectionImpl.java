@@ -44,7 +44,7 @@ public class P2PConnectionImpl implements P2PConnection {
 	public boolean sendMessage(String message) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     	try {
-    		String msg = myUser.getNickname() + ": " + dtf.format(LocalDateTime.now()) + " " + message;
+    		String msg = dtf.format(LocalDateTime.now()) + " " + myUser.getNickname() + " (" + myUser.getId() + "): " + message;
     		messages.add(msg);
 			output.write("M" + msg + "\n");
 			output.flush();
