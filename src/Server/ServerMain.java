@@ -13,6 +13,7 @@ public class ServerMain {
     public void run(){
         try {
             Server server = new Server(30000);
+            System.out.println("Starting server with port: 30000");
             server.start();
         } catch (IOException e) {
             e.printStackTrace();
