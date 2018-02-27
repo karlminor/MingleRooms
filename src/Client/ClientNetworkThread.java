@@ -150,7 +150,7 @@ public class ClientNetworkThread extends Thread {
 			msg = message.split("¤");
 			u = findUserWithId(Integer.valueOf(msg[0]));
 			if (u != null) {
-				chatMessages.add(u.getNickname() + ": " + msg[1]);
+				chatMessages.add(msg[1].substring(0, 9) + u.getNickname() + " (" + u.getId() + "): " + msg[1].substring(9));
 				updateGUIChat();
 			}
 			break;
