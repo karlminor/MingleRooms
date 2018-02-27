@@ -27,7 +27,6 @@ public class Server {
 
     public void start() throws IOException {
         postman.start();
-        System.out.println("Server successfully started");
         while(true){
 
             //When a client connects first creates the user, then starts the thread, then adds it to the user list.
