@@ -88,6 +88,7 @@ public class ChatRoomView extends HBox {
         friendsOnlineLV.setOnKeyPressed(new KeyboardHandler());
 
         chatRoomJoinLeaveHistory = new TextArea();
+        chatRoomJoinLeaveHistory.setWrapText(true);
         chatRoomJoinLeaveHistory.setEditable(false);
         chatRoomJoinLeaveHistory.setPrefHeight(HEIGHT * 0.51);
         chatRoomJoinLeaveHistory.setOnKeyPressed(new KeyboardHandler());
@@ -370,7 +371,7 @@ public class ChatRoomView extends HBox {
     public void updateChatRoomJoinLeaveHistory(ArrayList<String> history) {
         chatRoomJoinLeaveHistory.clear();
         for(String s : history) {
-            chatRoomJoinLeaveHistory.setText(chatRoomJoinLeaveHistory.getText() + s + "\n");
+            chatRoomJoinLeaveHistory.setText(chatRoomJoinLeaveHistory.getText() + "*" + s + "\n");
         }
     }
 
