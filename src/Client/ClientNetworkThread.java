@@ -55,7 +55,7 @@ public class ClientNetworkThread extends Thread {
 			try {
 				message = read();
 				decodeMessage(message);
-			} catch (IOException e) {
+			} catch (IOException|NullPointerException e) {
 			}
 
 			if (isInterrupted()) {
@@ -81,7 +81,7 @@ public class ClientNetworkThread extends Thread {
 	 * 
 	 * @throws IOException
 	 */
-	public void decodeMessage(String message) throws IOException {
+	public void decodeMessage(String message) throws IOException, NullPointerException {
 		String msg[];
 		char identifier = message.charAt(0);
 		message = message.substring(1);
@@ -113,16 +113,16 @@ public class ClientNetworkThread extends Thread {
 				} else if (u.getChatRoom() == myUser.getChatRoom()) {
 					sameRoomUsers.add(u);
 					if (room == 0) {
-						history.add(u.getNickname() + " has joined room " + u.getChatRoom());
+						history.add(u.getNickname() + " (" + u.getId() + ") has joined room " + u.getChatRoom());
 					} else {
-						history.add(u.getNickname() + " has left room " + room);
+						history.add(u.getNickname() + " (" + u.getId() + ") has left room " + room);
 					}
 				} else {
 					sameRoomUsers.remove(u);
 					if (room == 0) {
-						history.add(u.getNickname() + " has joined room " + u.getChatRoom());
+						history.add(u.getNickname() + " (" + u.getId() + ") has joined room " + u.getChatRoom());
 					} else {
-						history.add(u.getNickname() + " has left room " + room);
+						history.add(u.getNickname() + " (" + u.getId() + ") has left room " + room);
 					}
 				}
 
@@ -138,7 +138,7 @@ public class ClientNetworkThread extends Thread {
 			User newUser = new User(Integer.valueOf(msg[1]), msg[2], msg[3], Integer.valueOf(msg[4]),
 					Integer.valueOf(msg[5]), Integer.valueOf(msg[6]));
 			allUsers.add(newUser);
-			history.add(newUser.getNickname() + " has joined Main Room");
+			history.add(newUser.getNickname() + " (" + newUser.getId() + ") has joined Main Room");
 			if (myUser.getChatRoom() == newUser.getChatRoom()) {
 				sameRoomUsers.add(newUser);
 				updateGUICharacters();
@@ -164,7 +164,7 @@ public class ClientNetworkThread extends Thread {
 				if (u != null) {
 					allUsers.remove(u);
 					sameRoomUsers.remove(u);
-					history.add(u.getNickname() + " has left");
+					history.add(u.getNickname() + " (" + u.getId() + ") has left");
 					updateFriendsOnline();
 					updateGUICharacters();
 					updateHistory();
