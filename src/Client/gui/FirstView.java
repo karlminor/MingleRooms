@@ -89,11 +89,6 @@ public class FirstView extends VBox{
         connectB.setOnAction(new ConnectButtonHandler());
         buttonCenter.getChildren().add(connectB);
 
-        // TODO temp values (can be removed)
-        inetAddressTF.setText("localhost");
-        portTF.setText("30000");
-        nicknameTF.setText("Nickname");
-
         inputFieldsPanel.getChildren().addAll(titleCenter, inetAddressTF, portTF, nicknameTF, buttonCenter);
 
         // Avatar selection
@@ -195,6 +190,11 @@ public class FirstView extends VBox{
                     System.out.println("ENTER");
                     connectB.fire();
                     event.consume();
+                    break;
+                case F1:
+                    inetAddressTF.setText("localhost");
+                    portTF.setText("30000");
+                    nicknameTF.setText("Nickname");
                     break;
             }
         }
