@@ -11,7 +11,6 @@ import java.net.Socket;
 
 public class Server {
     private Socket socket;
-    private User u;
     private ServerSocket ss;
     private Users users;
     private Mailbox mailbox;
@@ -34,9 +33,7 @@ public class Server {
             //When a client connects first creates the user, then starts the thread, then adds it to the user list.
             //Upon being added to the user list the server tells the client everything it needs to know to set up the connection
             socket = ss.accept();
-            u = new User(socket, mailbox, postman, count);
-            u.start();
-            users.add(u);
+            users.add(socket, mailbox, postman, count);
             count++;
         }
     }

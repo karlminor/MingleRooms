@@ -1,6 +1,10 @@
 package Server.UserLogic;
 
+import Server.MessageLogic.Mailbox;
+import Server.MessageLogic.Postman;
+
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -12,7 +16,9 @@ public class Users {
         users = new ArrayList<>();
     }
 
-    public synchronized void add(User u) {
+    public synchronized void add(Socket socket, Mailbox mailbox, Postman postman, int count) {
+        User u = new User(socket, mailbox, postman, count);
+        u.start();
         setupConnection(u);
     }
 
